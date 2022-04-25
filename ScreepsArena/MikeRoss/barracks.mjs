@@ -109,7 +109,7 @@ export function extensionRushSquadRole() { // behavior tree to rush ramps
     if(currentNode.status == RUNNING) currentNode = currentNode;
     else if(currentNode.status == SUCCESS) currentNode = currentNode.right;
     else if(currentNode.status == FAILURE) currentNode = this.tree.left;
-    else currentNode.status = this.tree.left;
+    else currentNode = this.tree.left;
 
     if(!currentNode.behavior) currentNode = this.tree.right;
 

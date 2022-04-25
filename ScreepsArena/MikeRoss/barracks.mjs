@@ -4,9 +4,7 @@ import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK } from '/ga
 import { } from '/arena';
 import { harvestFromSource, defaultSquadRole } from './tasks'
 import { workerRole } from './neutral'
-
-export var QUEUED = 0;
-export var ALIVE = 1;
+import {QUEUED, ALIVE } from './global'
 
 // ========================================
 //          *****Creeps*****
@@ -33,3 +31,16 @@ export var baseSquad = {
 // ========================================
 //        *****SquadHelpers*****
 // ========================================
+export function findCenterOfUnits(units)
+{
+  var tempX = 0;
+  var tempY = 0;
+  units.forEach((role, i) => {
+    tempX += role.creep.x;
+    tempY += role.creep.y;
+  });
+
+  tempX = tempX/units.length;
+  tempY = tempY/units.length;
+  return {x:tempX, y:tempY};
+}

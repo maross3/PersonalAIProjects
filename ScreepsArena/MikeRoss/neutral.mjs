@@ -3,7 +3,6 @@ import { Creep, StructureSpawn, StructureContainer, Source, ConstructionSite } f
 import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK } from '/game/constants';
 import { } from '/arena';
 import {QUEUED, ALIVE } from './global'
-import { baseSquad } from './barracks'
 
 var constSite;
 
@@ -53,11 +52,8 @@ export function getBodyParts(body, ratio, total){
 }
 
 export function spawnSquad(sqd, spawner){
-  var creepToSpawn = sqd.queuedUnits[sqd.numberOfUnits];
 
-  // TODO:
-  // calculate body parts energy to spawner curEnergy condition
-  // if not enough energy, return
+  var creepToSpawn = sqd.queuedUnits[sqd.numberOfUnits];
   var creepMakeUp = getBodyParts(creepToSpawn.body, creepToSpawn.ratio, 5)
   var spawnedCreep = spawner.spawnCreep(creepMakeUp).object;
 

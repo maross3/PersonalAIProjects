@@ -12,7 +12,7 @@ export var workerCreep = {
   creep: "none",
   body: [WORK, CARRY, MOVE],
   ratio: [0.5,0.25,0.25],
-  squad: baseSquad,
+  squad: "none",
   status: QUEUED,
   act: workerRole
 };
@@ -43,6 +43,7 @@ export var baseSquad = {
 //        *****SquadRoles*****
 // ========================================
 export function defaultSquadRole() {
+  if(this.numberOfUnits == 0) return;
   this.units.forEach((unit, i) => {
     unit.act()
   });

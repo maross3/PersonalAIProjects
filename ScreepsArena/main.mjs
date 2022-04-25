@@ -24,16 +24,17 @@ var creep3 = Object.create(workerCreep);
 
 function workerRole()
 {
-  var spawner = getObjectsByPrototype(StructureSpawn)[0];
-  
-  if(!this.target != spawner]) this.target = spawner;
+  if(!this.spawner) this.spawner = getObjectsByPrototype(StructureSpawn)[0];
   if(!this.energySource) this.energySource = getObjectsByPrototype(Source)[0];
   if(!this.creep.store) return;
 
-
-  if(this.creep.store.getFreeCapacity(RESOURCE_ENERGY)) harvestFromSource(this.creep, this.energySource); // makesure this.creep is calling on individual creeps
-  else if(this.creep.transfer(this.target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) this.creep.moveTo(this.spawner);
+   if(this.creep.store.getFreeCapacity(RESOURCE_ENERGY)) harvestFromSource(this.creep, this.energySource); // makesure this.creep is calling on individual creeps
+   else if(this.creep.transfer(this.spawner, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) this.creep.moveTo(this.spawner);
 };
+
+function attackRole(){
+
+}
 
 function defaultSquadRole() {
   this.units.forEach((unit, i) => {
@@ -48,24 +49,43 @@ var baseSquad = {
   act: defaultSquadRole
 };
 
+function getBodyParts(body, ratio, total){
+  var temp = [];
+  for(let i = 0; i < body.length; i++){
+    for(let j =0; j < ratio[i] * total; j++)
+      temp.push(body[i]);
+  }
+  return temp;
+}
+
+function spawnSquad(sqd){
+  var creepToSpawn = sqd.queuedUnits[sqd.numberOfUnits];
+
+  // calculate body parts energy to spawner curEnergy condition
+  var creepMakeUp = getBodyParts(creepToSpawn.body, creepToSpawn.ratio, 5)
+  var spawnedCreep = spawner.spawnCreep(creepMakeUp).object;
+
+  if(spawnedCreep){
+    creepToSpawn.creep = spawnedCreep;
+    creepToSpawn.status = ALIVE;
+    sqd.units[baseSquad.numberOfUnits] = sqd.queuedUnits[sqd.numberOfUnits];
+    sqd.numberOfUnits += 1;
+
+    // empty variable for curEnergy spawn condition
+  }
+}
 
 
 export function loop() {
   if(!spawner) spawner = getObjectsByPrototype(StructureSpawn)[0];
 
-  spawner.spawnCreep(workerCreep.body);
+
+
 
   if(baseSquad.numberOfUnits < 3) {
-    var creepToSpawn = baseSquad.queuedUnits[baseSquad.numberOfUnits];
-    var spawnedCreep = spawner.spawnCreep(creepToSpawn.body).object;
-
-    if(spawnedCreep){
-      creepToSpawn.creep = spawnedCreep;
-      creepToSpawn.status = ALIVE;
-      baseSquad.units[baseSquad.numberOfUnits] = baseSquad.queuedUnits[baseSquad.numberOfUnits];
-      baseSquad.numberOfUnits += 1;
+    spawnSquad(baseSquad);
     }
-  }
+    // if x squad.numberOfUnits < z) spawn x squad
 
   if(baseSquad.numberOfUnits > 0) baseSquad.act();
 

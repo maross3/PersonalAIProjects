@@ -9,7 +9,7 @@ var constSite;
 // ========================================
 //       *****CreepFunctions*****
 // ========================================
-export function BuildStructureAt(creep, structure, x, y){
+export function buildStructureAt(creep, structure, x, y){
   if(!constSite) {
     createConstructionSite(x, y, structure);
     constSite = getObjectsByPrototype(ConstructionSite)[0];
@@ -20,10 +20,20 @@ export function BuildStructureAt(creep, structure, x, y){
   if(constSite.progressTotal == 0) constSite = null;
 }
 
+export function depositToSpawner(creep, spawner){
+  if(creep.store.getFreeCapacity(RESOURCE_ENERGY)) return;
+  if(creep.transfer(spawner, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.moveTo(spawner);
+}
+
 export function harvestFromSource(creep, source){
   if(!creep.store.getFreeCapacity(RESOURCE_ENERGY)) return;
   if(creep.harvest(source) == ERR_NOT_IN_RANGE) creep.moveTo(source);
   //return 1;
+}
+
+export function withdrawFromSource(creep, source){
+  if(!creep.store.getFreeCapacity(RESOURCE_ENERGY)) return;
+  if(creep.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.moveTo(source);
 }
 
 // ========================================

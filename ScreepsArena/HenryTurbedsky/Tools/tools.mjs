@@ -39,7 +39,7 @@ export function pluck(arr, key){
   return arr.map(i => i[key]);
 }
 export function getCreepBody(creep){
-  this.pluck(creep.body, "type");
+  return this.pluck(creep.body, "type");
 }
 
 export function randomHex(){

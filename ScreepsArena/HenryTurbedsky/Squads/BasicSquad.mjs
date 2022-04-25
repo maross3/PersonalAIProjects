@@ -15,6 +15,8 @@ export class BasicSquad {
   static unfilledRoles;
   static fullSquad;
 
+  static active;
+
   static debugColor;
   static debugCode;
   static debug;
@@ -23,6 +25,9 @@ export class BasicSquad {
     this.currentRoles = [];
     this.unfilledRoles = [ Object.create(worker), Object.create(worker), Object.create(worker),];
     this.fullSquad = false;
+
+    this.active = false;
+
     this.debugColor = "#ffffff";
     this.debugCode = SquadTools.debugSquad;
     this.debug = false;
@@ -36,9 +41,11 @@ export class BasicSquad {
 
       if(this.debug){
         SquadTools.squadDebugLines(this);
-        squad.debugCode();
+        this.debugCode();
       }
     }
+
+
 
 
   };

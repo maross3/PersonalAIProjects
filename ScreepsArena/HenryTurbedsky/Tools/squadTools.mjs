@@ -115,14 +115,15 @@ export function debugSquad()
 {
   var str =
   `
-  ---------- debugSquad -------------
-  Role of type: ${this.squadType}
+  ++++++++++ debugSquad +++++++++++++
+  Squad of type: ${this.squadType}
   currentRoles: ${this.currentRoles}
   unfilledRoles: ${this.unfilledRoles}
+  active: ${this.active}
   fullSquad: ${this.fullSquad}
   act: ${this.act.name}
   debugColor: ${this.debugColor.name}
-  ----------------------------------`
+  +++++++++++++++++++++++++++++++++++`
   console.log(str);
   return str;
 }

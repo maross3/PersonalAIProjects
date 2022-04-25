@@ -7,12 +7,20 @@ import { BasicCommander } from './BasicCommander'
 
 var creep;
 var spawn;
-var c = new BasicCommander();
+var basicCommander = new BasicCommander();
 
 
 export function loop()
 {
-  c.run();
+  basicCommander.run();
+
+  // var test = {
+  //   f: null,
+  // }
+  //
+  // test.f = ()=>{console.log("Hello World");}
+  //
+  // test.f();
 
 
   // var obj = new BasicSquad();

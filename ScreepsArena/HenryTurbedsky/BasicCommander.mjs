@@ -1,10 +1,12 @@
 import { getObjectsByPrototype, getRange, findClosestByPath } from '/game/utils';
 import { Creep, StructureSpawn, StructureContainer, Source } from '/game/prototypes';
 import { RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE } from '/game/constants';
+import { searchPath } from 'game/path-finder';
 import { } from '/arena';
+
 import * as Tools from './tools'
 import * as SquadTools from './squadTools'
-import { searchPath } from 'game/path-finder';
+import * as RoleTools from './roleTools'
 
 import { BasicSquad } from './BasicSquad'
 
@@ -56,7 +58,10 @@ export class BasicCommander {
 
     if (this.squadQueue.length > 0){
       this.squadQueue.forEach((squad, i)=>{
-        this.fillSquad(squad);
+        if(SquadTools.fillSquad(squad, this.creepBuffer)){
+          this.squadList.push(squad);
+          this.squadQueue.splice(i,1);
+        }
       });
     }
 
@@ -64,6 +69,7 @@ export class BasicCommander {
     console.log(this.squadQueue);
     console.log("this.squadList");
     console.log(this.squadList);
+
 
   }
 
@@ -80,141 +86,26 @@ export class BasicCommander {
   }
 
 
-  fillSquad(squad)
-  {
-    squad.unfilledRoles.forEach((openRole, roleIndex) =>{
-      var matchesIndexes = indexesOfCreepRoleBodyMatch(openRole, this.creepBuffer);
-
-      if(matchesIndexes.length > 0)
-      {
-        var closestMatch = matchesIndexes[0];;
-
-        if(squad.currentRoles.length > 0){
-          var tempShortestRange = 1111;
-          var smallIndex = -1;
-          var closestObj;
-
-          matchesIndexes.forEach((matchIndex) =>{
-            var pathObj = searchPath(SquadTools.squadCenter(squad), this.creepBuffer[matchIndex]);
-            if (tempShortestRange > pathObj.cost){
-              tempShortestRange = pathObj.cost;
-              smallIndex = matchesIndexes;
-            }
-          });
-
-          closestMatch = matchIndex;
-        }
-
-        if(closestMatch){
-          squad.fillRole(roleIndex, closestMatch.creep);
-          this.creepBuffer.splice(closestMatch.index,1);
-        }
-      }
-
-    });
-
-    if(squad.unfilledRoles.length == 0){
-      this.squadList.push(squad);
-      this.squadQueue.shift();
-      return true;
-    }else{
-      return false;
-    }
-  }
-
-
-
-
-
-
-
-  indexesOfCreepRoleBodyMatch(openRole, creepArray)
-  {
-    var indexes = [];
-    creepArray.forEach((creep, creepIndex) =>{
-
-      if(typeof creep.id !== 'undefined'){
-        var creepBody = Tools.pluck(creep.body, "type");
-
-        if(openRole.bodyMakeUp.length == creepBody.length){
-          var tempRoleBody = openRole.bodyMakeUp.sort();
-          var creepBody = creepBody.sort()
-
-          if(this.compareBodies(creepBody, tempRoleBody)){
-            indexes.push(creepIndex);
-
-          }
-        }
-      }
-    });
-
-    return indexes;
-  }
-  compareBodies(body1, body2){
-    body1.forEach((word, i) =>{
-      if(word != body2[i])
-        return false;
-    });
-    return true;
-  }
-
-
-
-  indexOfClosestCreepToSquad( squad, creepArray, arrayOfCreepIndexes)
-  {
-    var lowestCost = 1111;
-    var indexOfClosestCreep = -1;
-
-    // Run just the indexes that are in arrayOfCreepIndexes to fillter out creeps
-    if(typeof arrayOfCreepIndexes !== 'undefined') {
-      arrayOfCreepIndexes.forEach((creepIndex) =>{
-        var pathObj = searchPath(SquadTools.squadCenter(squad), creepArray[creepIndex]);
-        if (tempShortestRange > pathObj.cost){
-          tempShortestRange = pathObj.cost;
-          indexOfClosestCreep = creepIndex;
-        }
-      });
-    }else{
-      // This runs through all of the creepArray
-      creepArray.forEach((creep, creepIndex) =>{
-        var pathObj = searchPath(SquadTools.squadCenter(squad), creep);
-        if (tempShortestRange > pathObj.cost){
-          tempShortestRange = pathObj.cost;
-          indexOfClosestCreep = creepIndex;
-        }
-      });
-    }
-
-    return indexOfClosestCreep;
-  }
-
-
-
-
-
-
-
 
 
 
   spawnBodyQueue(spawn)
   {
-    if(this.spawnRole(spawn, this.bodyQueue[0]) ){
+    var newCreep = this.spawnRole(spawn, this.bodyQueue[0]);
+    if(newCreep){
+      this.creepBuffer.push(newCreep);
       this.bodyQueue.shift();
     }
   }
 
+
   spawnRole(spawn, body)
   {
-    this.obj = spawn.spawnCreep(body).object;
-    if(this.obj)
-    {
-      this.creepBuffer.push(this.obj);
-      return true;
-    }
-    return false;
-  }
+    var obj = spawn.spawnCreep(body).object;
+    if(obj) obj.bodyMakeUp = body;
 
+    return obj;
+  }
 
 
 }

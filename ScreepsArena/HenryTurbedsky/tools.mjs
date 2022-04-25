@@ -1,6 +1,7 @@
 import { getObjectsByPrototype, createConstructionSite } from '/game/utils';
 import { Creep, StructureSpawn, StructureContainer, Source, ConstructionSite } from '/game/prototypes';
 import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE } from '/game/constants';
+import { searchPath } from 'game/path-finder';
 import { } from '/arena';
 
 
@@ -18,29 +19,25 @@ export function harvestFromSource(creep, source){
 }
 
 
+export function arraysMatch(array1, array2){
+  if(array1.length != array2.length)
+    return false;
+
+  var array1Sorted = array1.sort();
+  var array2Sorted = array2.sort()
+
+  array1Sorted.forEach((item, i) =>{
+    if(item != array2Sorted[i])
+      return false;
+  });
+  return true;
+}
+
 
 // Converts an array of objects into an array of values corresponding to the specified key.
 export function pluck(arr, key){
   return arr.map(i => i[key]);
 }
-
-
-
-export function debugRole()
-{
-  var str =
-  `
-  ---------- debugRole -------------
-  Role of type: ${this.roleType}
-  creep: ${this.creep}
-  squad: ${this.squad}
-  bodyMakeUp: ${this.bodyMakeUp}
-  act: ${this.act.name}
-  ideal: ${this.ideal.name}
-  retreat: ${this.retreat.name}
-  move: ${this.move.name}
-  debug: ${this.debug.name}
-  ----------------------------------`
-  console.log(str);
-  return str;
+export function getCreepBody(creep){
+  this.pluck(creep.body, "type");
 }

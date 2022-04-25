@@ -19,12 +19,7 @@ export class BasicSquad {
 
 
 
-  fillRole(index, creep)
-  {
-    this.unfilledRoles[index].creep = creep;
-    this.currentRoles.push(this.unfilledRoles[index]);
-    this.unfilledRoles.splice(index, 1);
-  }
+
 
 
 }

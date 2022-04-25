@@ -1,17 +1,17 @@
 import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK } from '/game/constants';
 import * as Tools from './tools'
+import * as RoleTools from './roleTools'
 
 
 export var worker = {
   roleType: "worker",
   creep: "none",
-  squad: "none",
   bodyMakeUp: [WORK, CARRY, MOVE],
   act: mineAndFill,
   ideal: mineAndFill,
   retreat: mineAndFill,
   move: mineAndFill,
-  debug: Tools.debugRole,
+  debug: RoleTools.debugRole,
 };
 
 

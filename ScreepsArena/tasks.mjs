@@ -7,10 +7,10 @@ import { } from '/arena';
 // Creep role specific tasks
 var constSite;
 
-export function HarvestFromSource(creep, source){
-  if(!creep.store.getFreeCapacity(RESOURCE_ENERGY)) return -1;
+export function harvestFromSource(creep, source){
+  if(!creep.store.getFreeCapacity(RESOURCE_ENERGY))return;
   if(creep.harvest(source) == ERR_NOT_IN_RANGE) creep.moveTo(source);
-  return 1;
+  //return 1;
 }
 
 export function BuildStructureAt(creep, structure, x, y){

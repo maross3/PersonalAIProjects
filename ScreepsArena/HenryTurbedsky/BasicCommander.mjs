@@ -26,6 +26,8 @@ export class BasicCommander {
 
   static spawn;
 
+  //static squad;
+
   constructor(){
     this.currentState = null;
     // unassigned creep
@@ -37,13 +39,13 @@ export class BasicCommander {
     // list of squads that want to be filled
     this.squadQueue = [];
 
+
   }
 
 
   run()
   {
     if(!this.spawn) this.spawn = getObjectsByPrototype(StructureSpawn).find(s => s.my);
-
     var squad = new BasicSquad();
 
     if(this.squadQueue.length < 3)
@@ -67,21 +69,20 @@ export class BasicCommander {
       });
     }
 
-
-
     if(this.squadList.length > 0){
       this.squadList.forEach((squad, i)=>{
         squad.act();
       });
     }
 
-    if(this.squadQueue.length > 0){
-      this.squadQueue.forEach((squad, i)=>{
-        squad.act();
-      });
-    }
+    // if(this.squadQueue.length > 0){
+    //   this.squadQueue.forEach((squad, i)=>{
+    //     squad.act();
+    //   });
+    // }
 
-
+    // console.log("squadList: ", this.squadList);
+    // console.log("squadQueue: ", this.squadQueue);
   }
 
 

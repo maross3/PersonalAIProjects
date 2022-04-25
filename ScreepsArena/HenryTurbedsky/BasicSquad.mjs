@@ -2,22 +2,28 @@ import { getObjectsByPrototype } from '/game/utils';
 import { Creep, StructureSpawn, StructureContainer, Source, ConstructionSite, StructureTower } from '/game/prototypes';
 import { RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE } from '/game/constants';
 import { Visual } from '/game/visual';
-import {worker, fastWorker} from './engineerRoles'
+import {worker} from './engineerRoles'
 
 import * as Tools from './tools'
 import * as SquadTools from './squadTools'
+
 
 export class BasicSquad {
 
   static currentRoles;
   static unfilledRoles;
   static fullSquad;
-
+  static debugColor;
+  static debugCode;
+  static debug;
 
   constructor(){
     this.currentRoles = [];
     this.unfilledRoles = [ Object.create(worker), Object.create(worker), Object.create(worker),];
     this.fullSquad = false;
+    this.debugColor = "#ffffff";
+    this.debugCode = SquadTools.debugSquad;
+    this.debug = false;
   }
 
   act(){
@@ -25,17 +31,15 @@ export class BasicSquad {
       this.currentRoles.forEach((roles, i)=>{
         roles.act();
       });
-      var center = SquadTools.squadCenter(this)
-      this.currentRoles.forEach((roles, i)=>{
-        new Visual().line(roles.creep, center, {color: '#ff0000'});
-      });
+
+      if(this.debug){
+        SquadTools.squadDebugLines(this);
+        squad.debugCode();
+      }
     }
 
 
-
-    //new Visual().poly(Tools.pluck(this.currentRoles, "creep"), {color: '#ff0000'});
-  }
-
+  };
 
 
 

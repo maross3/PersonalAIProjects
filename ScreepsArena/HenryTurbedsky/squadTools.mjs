@@ -2,6 +2,7 @@ import { getObjectsByPrototype, createConstructionSite, findClosestByPath } from
 import { Creep, StructureSpawn, StructureContainer, Source, ConstructionSite } from '/game/prototypes';
 import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE } from '/game/constants';
 import { searchPath } from 'game/path-finder';
+import { Visual } from '/game/visual';
 import { } from '/arena';
 
 import * as Tools from './tools'
@@ -33,6 +34,7 @@ export function squadCenter(squad)
   tempY = tempY/squad.currentRoles.length;
   return {x:tempX, y:tempY};
 }
+
 
 export function fillSquadRole(squad, index, creep)
 {
@@ -82,7 +84,7 @@ export function indexOfClosestCreepToSquad( squad, creepArray, arrayOfCreepIndex
 // Removes the creep from the array when it is assigned
 export function fillSquad(squad, creepArray){
   if(this.observeIfFullSquad(squad)) return true;
-
+  console.log(squad.unfilledRoles);
   squad.unfilledRoles.forEach((openRole, roleIndex) =>{
     var matchIndexes = RoleTools.indexesOfCreepsMatchingRoleBody(openRole, creepArray);
 
@@ -97,4 +99,29 @@ export function fillSquad(squad, creepArray){
   });
 
   return this.observeIfFullSquad(squad);
+}
+
+export function squadDebugLines(squad){
+  if(!squad.debugColor) squad.debugColor = Tools.randomHex();
+  var center = this.squadCenter(squad)
+  squad.currentRoles.forEach((roles, i)=>{
+    new Visual().line(roles.creep, center, {color: squad.debugColor});
+  });
+}
+
+
+export function debugSquad()
+{
+  var str =
+  `
+  ---------- debugSquad -------------
+  Role of type: ${this.squadType}
+  currentRoles: ${this.currentRoles}
+  unfilledRoles: ${this.unfilledRoles}
+  fullSquad: ${this.fullSquad}
+  act: ${this.act.name}
+  debugColor: ${this.debugColor.name}
+  ----------------------------------`
+  console.log(str);
+  return str;
 }

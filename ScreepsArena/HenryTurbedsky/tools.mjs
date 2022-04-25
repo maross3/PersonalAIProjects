@@ -41,3 +41,7 @@ export function pluck(arr, key){
 export function getCreepBody(creep){
   this.pluck(creep.body, "type");
 }
+
+export function randomHex(){
+  return '#'+Math.floor(Math.random()*16777215).toString(16);
+}

@@ -4,7 +4,7 @@ import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK } from '/ga
 import { } from '/arena';
 import { harvestFromSource, spawnSquad } from './tasks'
 import { workerCreep, baseSquad } from './barracks'
-
+import {QUEUED, ALIVE } from './global'
 
 
 var spawner;

@@ -2,8 +2,8 @@ import { getObjectsByPrototype, createConstructionSite } from '/game/utils';
 import { Creep, StructureSpawn, StructureContainer, Source, ConstructionSite } from '/game/prototypes';
 import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE } from '/game/constants';
 import { } from '/arena';
-
-import { ALIVE, baseSquad } from './barracks'
+import {QUEUED, ALIVE } from './global'
+import {baseSquad } from './barracks'
 
 // Creep role specific tasks
 var constSite;

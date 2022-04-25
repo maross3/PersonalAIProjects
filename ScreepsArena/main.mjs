@@ -85,7 +85,8 @@ export function loop() {
   if(baseSquad.numberOfUnits < 3) {
     spawnSquad(baseSquad);
     }
-    // if x squad.numberOfUnits < z) spawn x squad
+
+  //
 
   if(baseSquad.numberOfUnits > 0) baseSquad.act();
 

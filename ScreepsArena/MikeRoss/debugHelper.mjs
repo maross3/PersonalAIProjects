@@ -1,5 +1,5 @@
 import { Visual } from '/game/visual';
-import { findCenterOfUnits } from './barracks';
+import { findCenterOfUnits } from './neutral';
 
 export function visualizeSquad(units){
   var center = findCenterOfUnits(units);

@@ -2,7 +2,7 @@ import { getObjectsByPrototype, getCpuTime } from '/game/utils';
 import { Creep, StructureSpawn, StructureContainer, Source } from '/game/prototypes';
 import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK } from '/game/constants';
 import { } from '/arena';
-import { harvestFromSource, spawnSquad } from './tasks'
+import { harvestFromSource, spawnSquad } from './neutral'
 import { workerCreep, baseSquad } from './barracks'
 import {QUEUED, ALIVE } from './global'
 import {visualizeSquad } from './debugHelper'

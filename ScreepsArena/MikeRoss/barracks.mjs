@@ -2,8 +2,7 @@ import { getObjectsByPrototype, getCpuTime } from '/game/utils';
 import { Creep, StructureSpawn, StructureContainer, Source } from '/game/prototypes';
 import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK } from '/game/constants';
 import { } from '/arena';
-import { harvestFromSource, defaultSquadRole } from './tasks'
-import { workerRole } from './neutral'
+import { harvestFromSource } from './neutral'
 import {QUEUED, ALIVE } from './global'
 
 // ========================================
@@ -19,6 +18,18 @@ export var workerCreep = {
 };
 
 // ========================================
+//        *****CreepRoles*****
+// ========================================
+export function workerRole() {
+  if(!this.spawner) this.spawner = getObjectsByPrototype(StructureSpawn)[0];
+  if(!this.energySource) this.energySource = getObjectsByPrototype(Source)[0];
+  if(!this.creep.store) return;
+
+   if(this.creep.store.getFreeCapacity(RESOURCE_ENERGY)) harvestFromSource(this.creep, this.energySource); // makesure this.creep is calling on individual creeps
+   else if(this.creep.transfer(this.spawner, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) this.creep.moveTo(this.spawner);
+};
+
+// ========================================
 //          *****Squads*****
 // ========================================
 export var baseSquad = {
@@ -29,18 +40,10 @@ export var baseSquad = {
 };
 
 // ========================================
-//        *****SquadHelpers*****
+//        *****SquadRoles*****
 // ========================================
-export function findCenterOfUnits(units)
-{
-  var tempX = 0;
-  var tempY = 0;
-  units.forEach((role, i) => {
-    tempX += role.creep.x;
-    tempY += role.creep.y;
+export function defaultSquadRole() {
+  this.units.forEach((unit, i) => {
+    unit.act()
   });
-
-  tempX = tempX/units.length;
-  tempY = tempY/units.length;
-  return {x:tempX, y:tempY};
 }

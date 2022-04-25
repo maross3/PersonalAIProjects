@@ -1,11 +1,11 @@
-import { getObjectsByPrototype, getCpuTime } from '/game/utils';
+import { } from '/game/constants';
 import { Creep, StructureSpawn, StructureContainer, Source } from '/game/prototypes';
-import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK } from '/game/constants';
-import { } from '/arena';
-import { harvestFromSource, spawnSquad } from './neutral'
-import { workerCreep, baseSquad } from './barracks'
+import { getObjectsByPrototype, getCpuTime } from '/game/utils';
+
 import {QUEUED, ALIVE } from './global'
+import { workerCreep, baseSquad, generalistWorkerCreep } from './barracks'
 import {visualizeSquad } from './debugHelper'
+import { harvestFromSource, spawnSquad } from './neutral'
 
 var spawner;
 
@@ -13,9 +13,9 @@ var creep1 = Object.create(workerCreep);
 var creep2 = Object.create(workerCreep);
 var creep3 = Object.create(workerCreep);
 
-var creep4 = Object.create(workerCreep);
-var creep5 = Object.create(workerCreep);
-var creep6 = Object.create(workerCreep);
+var creep4 = Object.create(generalistWorkerCreep);
+var creep5 = Object.create(generalistWorkerCreep);
+var creep6 = Object.create(generalistWorkerCreep);
 
 var squadOne = Object.create(baseSquad);
 var squadTwo = Object.create(baseSquad);

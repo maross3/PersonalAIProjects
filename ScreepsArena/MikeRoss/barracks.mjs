@@ -1,14 +1,17 @@
-import { getObjectsByPrototype, getCpuTime } from '/game/utils';
-import { Creep, StructureSpawn, StructureContainer, Source } from '/game/prototypes';
+import { getObjectsByPrototype } from '/game/utils';
+import { Creep, StructureSpawn, Source } from '/game/prototypes';
 import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK } from '/game/constants';
 import { } from '/arena';
-import { harvestFromSource } from './neutral'
-import {QUEUED, ALIVE } from './global'
+
+import {QUEUED, ALIVE } from './global';
+import {selfDefense} from './defensive';
+import { attack } from './offensive';
+import { harvestFromSource, findCenterOfUnits } from './neutral';
 
 // ========================================
 //          *****Creeps*****
 // ========================================
-export var workerCreep = {
+export var workerCreep = { // W,C,M
   creep: "none",
   body: [WORK, CARRY, MOVE],
   ratio: [0.5,0.25,0.25],
@@ -16,6 +19,15 @@ export var workerCreep = {
   status: QUEUED,
   act: workerRole
 };
+
+export var generalistWorkerCreep = {
+  creep: "none",
+  body: [WORK, CARRY, MOVE, ATTACK],
+  ratio: [0.25, 0.25, 0.25, 0.25],
+  squad: "none",
+  status: QUEUED,
+  act: workerRole
+}
 
 // ========================================
 //        *****CreepRoles*****
@@ -44,7 +56,12 @@ export var baseSquad = {
 // ========================================
 export function defaultSquadRole() {
   if(this.numberOfUnits == 0) return;
+
+  // if the squad can attack
+  var closestThreat = selfDefense(findCenterOfUnits(this.units));
+
   this.units.forEach((unit, i) => {
-    unit.act()
+    if(closestThreat !=  false && unit.body.includes(ATTACK)) attack(unit.creep, closestThreat);
+    else unit.act();
   });
 }

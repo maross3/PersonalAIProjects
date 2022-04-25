@@ -1,2 +1,2 @@
-export var QUEUED = 0;
-export var ALIVE = 1;
+export var ALIVE = 0;
+export var QUEUED = 1;

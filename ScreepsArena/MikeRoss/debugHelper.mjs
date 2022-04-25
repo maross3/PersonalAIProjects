@@ -1,4 +1,5 @@
 import { Visual } from '/game/visual';
+
 import { findCenterOfUnits } from './neutral';
 
 export function visualizeSquad(units){

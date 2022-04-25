@@ -82,7 +82,7 @@ export class BasicCommander {
     // }
 
     // console.log("squadList: ", this.squadList);
-    // console.log("squadQueue: ", this.squadQueue);
+    // console.log("squadQueue: ", this.squadQueue);m
   }
 
 

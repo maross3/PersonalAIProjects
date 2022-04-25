@@ -1,4 +1,4 @@
-import { getObjectsByPrototype } from '/game/utils';
+import { getObjectsByPrototype, getTicks } from '/game/utils';
 import { Creep, StructureSpawn, StructureContainer, Source } from '/game/prototypes';
 import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK } from '/game/constants';
 import { } from '/arena';
@@ -35,7 +35,7 @@ export var rampartWorkerCreep = { // W,C,M
   ratio: [0.25, 0.25, 0.50],
   squad: "none",
   status: QUEUED,
-  act: rampartRushFillRole
+  act: extensionRushFillRole
 }
 
 // ========================================
@@ -50,7 +50,9 @@ function minerRole() {
    else if(this.creep.transfer(this.spawner, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) this.creep.moveTo(this.spawner);
 };
 
-function rampartRushFillRole()  {
+// this grabs the capacity before it actually spawns the creep
+// fix success condition
+function extensionRushFillRole()  {
   if(!this.spawner) this.spawner = getObjectsByPrototype(StructureSpawn)[0];
   if(!this.energySource) this.energySource = getObjectsByPrototype(StructureContainer)[0];
   if(!this.creep.store) return;
@@ -58,13 +60,16 @@ function rampartRushFillRole()  {
   withdrawFromSource(this.creep, this.energySource);
   depositToSpawner(this.creep, this.spawner);
 
-  if(this.squad.numberOfUnits == 2 && this.spawner.store.getUsedCapacity(RESOURCE_ENERGY) > 250) return SUCCESS;
+  //this.spawner.store.getUsedCapacity(RESOURCE_ENERGY) > 250: needs to have delay
+  if(this.squad.numberOfUnits == 2 && getTicks() % 50 == 0) return SUCCESS;
   console.log("running");
   return RUNNING;
 }
 
-function rampartRushBuildRole() {
+// sources spawn every 50 ticks
+function extensionRushBuildRole() {
   console.log("building ramparts");
+  return RUNNING;
 }
 
 // ========================================
@@ -74,7 +79,7 @@ export var baseSquad = {
   units: [],
   queuedUnits: [],
   numberOfUnits: 0,
-  act: rampartRushSquadRole
+  act: extensionRushSquadRole
 };
 
 // ========================================
@@ -82,41 +87,40 @@ export var baseSquad = {
 // ========================================
 export function defaultSquadRole() {
   if(this.numberOfUnits == 0) return;
-
-  // if the squad can attack
   var closestThreat = selfDefense(findCenterOfUnits(this.units));
-
   this.units.forEach((unit, i) => {
-
     if(closestThreat !=  false && unit.body.includes(ATTACK)) attack(unit.creep, closestThreat);
-    else if(unit.act != rampartRushFillRole) unit.act = rampartRushFillRole;
-
+    else if(unit.act != extensionRushFillRole) unit.act = extensionRushFillRole;
     unit.act();
-
-
   });
-}
-var currentNode;
+} // legacy
 
-export function rampartRushSquadRole() {
+var currentNode;
+export function extensionRushSquadRole() { // behavior tree to rush ramps
   if(!this.tree) this.tree = setUpBehaviorTree();
   if(this.numberOfUnits == 0) return;
 
-  if(!currentNode) currentNode = this.tree.left.status;
+  if(!currentNode) currentNode = this.tree.left;
 
   var closestThreat = selfDefense(findCenterOfUnits(this.units));
 
   this.units.forEach((unit, i) => {
-    if(unit.act() == RUNNING) currentNode = this.tree.left.status;
-    else if(unit.act() == SUCCESS) currentNode = this.tree.right.status;
 
-    unit.act = currentNode;
+    if(currentNode.status == RUNNING) currentNode = currentNode;
+    else if(currentNode.status == SUCCESS) currentNode = currentNode.right;
+    else if(currentNode.status == FAILURE) currentNode = this.tree.left;
+    else currentNode.status = this.tree.left;
 
+    if(!currentNode.behavior) currentNode = this.tree.right;
+
+    unit.act = currentNode.behavior;
+    currentNode.status = unit.act();
   });
 }
 
-
-
+// ========================================
+// *****DataStructures of Mass Destruction*****
+// ========================================
 function setUpBehaviorTree(){
   var root = Object.create(node);
   var left = Object.create(node);
@@ -124,8 +128,9 @@ function setUpBehaviorTree(){
   root.left = left;
   root.right = right;
 
-  root.left.status = rampartRushFillRole;
-  root.right.status = rampartRushBuildRole;
+  root.left.behavior = extensionRushFillRole;
+  root.left.status = RUNNING;
+  root.right.behavior = extensionRushBuildRole;
   return root;
 }
 
@@ -133,4 +138,5 @@ var node = {
   left: 0,
   right: 0,
   status: FAILURE,
+  behavior: 0
 }

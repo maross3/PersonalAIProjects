@@ -25,6 +25,8 @@ creep2.squad = squadOne;
 squadOne.queuedUnits = [creep1, creep2];
 squadOne.units = [];
 
+//var squadTwo = Object.create(baseSquad);
+
 //squadTwo.queuedUnits = [creep3, creep4, creep5];
 //squadTwo.units = [];
 

@@ -24,7 +24,7 @@ export function arraysMatch(array1, array2){
     return false;
 
   var array1Sorted = array1.sort();
-  var array2Sorted = array2.sort()
+  var array2Sorted = array2.sort();
 
   array1Sorted.forEach((item, i) =>{
     if(item != array2Sorted[i])

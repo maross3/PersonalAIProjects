@@ -27,9 +27,10 @@ export function squadCenter(squad)
     tempX += role.creep.x;
     tempY += role.creep.y;
   });
-  tempX = Math.ceil(tempX/squad.currentRoles.length);
-  tempY = Math.ceil(tempY/squad.currentRoles.length);
-
+  // tempX = Math.ceil(tempX/squad.currentRoles.length);
+  // tempY = Math.ceil(tempY/squad.currentRoles.length);
+  tempX = tempX/squad.currentRoles.length;
+  tempY = tempY/squad.currentRoles.length;
   return {x:tempX, y:tempY};
 }
 
@@ -48,13 +49,13 @@ export function closestCreepToSquad(squad, creepArray)
 
 
 // arrayOfCreepIndexes is optional
-export function indexOfClosestCreepToSquad( squad, creepArray, arrayOfCreepIndexes)
+export function indexOfClosestCreepToSquad( squad, creepArray, arrayOfCreepIndexes = "unsupplied")
 {
   var lowestCost = 1111;
   var indexOfClosestCreep;
 
   // Run just the indexes that are in arrayOfCreepIndexes to fillter out creeps
-  if(typeof arrayOfCreepIndexes !== 'undefined') {
+  if(typeof arrayOfCreepIndexes !== "unsupplied") {
     arrayOfCreepIndexes.forEach((creepIndex) =>{
       var pathObj = searchPath(squadCenter(squad), creepArray[creepIndex]);
       if (lowestCost > pathObj.cost){

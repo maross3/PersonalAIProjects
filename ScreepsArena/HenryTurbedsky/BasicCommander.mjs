@@ -24,6 +24,7 @@ export class BasicCommander {
   // list of squads that want to be filled
   static squadQueue;
 
+  static spawn;
 
   constructor(){
     this.currentState = null;
@@ -35,13 +36,14 @@ export class BasicCommander {
     this.squadList = [];
     // list of squads that want to be filled
     this.squadQueue = [];
+
   }
 
 
   run()
   {
+    if(!this.spawn) this.spawn = getObjectsByPrototype(StructureSpawn).find(s => s.my);
 
-    var spawn = getObjectsByPrototype(StructureSpawn).find(s => s.my);
     var squad = new BasicSquad();
 
     if(this.squadQueue.length < 3)
@@ -52,7 +54,7 @@ export class BasicCommander {
     }
 
     if(this.squadQueue.length != 0){
-      this.spawnBodyQueue(spawn);
+      this.spawnBodyQueue(this.spawn);
     }
 
 
@@ -65,10 +67,19 @@ export class BasicCommander {
       });
     }
 
-    console.log("this.squadQueue");
-    console.log(this.squadQueue);
-    console.log("this.squadList");
-    console.log(this.squadList);
+
+
+    if(this.squadList.length > 0){
+      this.squadList.forEach((squad, i)=>{
+        squad.act();
+      });
+    }
+
+    if(this.squadQueue.length > 0){
+      this.squadQueue.forEach((squad, i)=>{
+        squad.act();
+      });
+    }
 
 
   }

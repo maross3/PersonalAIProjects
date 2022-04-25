@@ -2,14 +2,15 @@ import { getObjectsByPrototype, getRange, findClosestByPath } from '/game/utils'
 import { Creep, StructureSpawn, StructureContainer, Source } from '/game/prototypes';
 import { searchPath } from 'game/path-finder';
 import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK } from '/game/constants';
-import * as Tools from './tools'
-import * as RoleTools from './roleTools'
+
+import * as Tools from '../Tools/tools'
+import * as RoleTools from '../Tools/roleTools'
 
 
 export var worker = {
   roleType: "worker",
   creep: "none",
-  bodyMakeUp: [WORK, CARRY, MOVE],
+  bodyMakeUp: [WORK, CARRY, MOVE,],
   act: mineAndFill,
   ideal: mineAndFill,
   retreat: mineAndFill,

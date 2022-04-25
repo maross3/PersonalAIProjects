@@ -4,11 +4,11 @@ import { RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE } from '/game/cons
 import { searchPath } from 'game/path-finder';
 import { } from '/arena';
 
-import * as Tools from './tools'
-import * as SquadTools from './squadTools'
-import * as RoleTools from './roleTools'
+import * as Tools from '../Tools/tools'
+import * as RoleTools from '../Tools/roleTools'
+import * as SquadTools from '../Tools/squadTools'
 
-import { BasicSquad } from './BasicSquad'
+import { BasicSquad } from '../Squads/BasicSquad'
 
 
 export class BasicCommander {

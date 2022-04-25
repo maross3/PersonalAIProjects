@@ -84,7 +84,7 @@ export function indexOfClosestCreepToSquad( squad, creepArray, arrayOfCreepIndex
 // Removes the creep from the array when it is assigned
 export function fillSquad(squad, creepArray){
   if(this.observeIfFullSquad(squad)) return true;
-  console.log(squad.unfilledRoles);
+
   squad.unfilledRoles.forEach((openRole, roleIndex) =>{
     var matchIndexes = RoleTools.indexesOfCreepsMatchingRoleBody(openRole, creepArray);
 
@@ -100,6 +100,7 @@ export function fillSquad(squad, creepArray){
 
   return this.observeIfFullSquad(squad);
 }
+
 
 export function squadDebugLines(squad){
   if(!squad.debugColor) squad.debugColor = Tools.randomHex();

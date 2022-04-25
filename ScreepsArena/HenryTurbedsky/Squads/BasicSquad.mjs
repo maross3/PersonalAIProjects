@@ -2,10 +2,11 @@ import { getObjectsByPrototype } from '/game/utils';
 import { Creep, StructureSpawn, StructureContainer, Source, ConstructionSite, StructureTower } from '/game/prototypes';
 import { RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE } from '/game/constants';
 import { Visual } from '/game/visual';
-import {worker} from './engineerRoles'
 
-import * as Tools from './tools'
-import * as SquadTools from './squadTools'
+import * as Tools from '../Tools/tools'
+import * as SquadTools from '../Tools/squadTools'
+
+import {worker} from '../Roles/engineerRoles'
 
 
 export class BasicSquad {
@@ -13,6 +14,7 @@ export class BasicSquad {
   static currentRoles;
   static unfilledRoles;
   static fullSquad;
+
   static debugColor;
   static debugCode;
   static debug;
@@ -44,13 +46,6 @@ export class BasicSquad {
 
 
 }
-
-
-
-
-
-
-
 
 
 

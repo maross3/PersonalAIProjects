@@ -1,4 +1,4 @@
-import { getObjectsByPrototype, getTicks, findInRange, createConstructionSite, findClosestByPath } from '/game/utils';
+import { getObjectsByPrototype, getTicks, findInRange, createConstructionSite, findClosestByPath, findClosestByRange } from '/game/utils';
 import { Creep, StructureSpawn, StructureContainer, Source, StructureExtension, ConstructionSite } from '/game/prototypes';
 import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK, ERR_NOT_ENOUGH_RESOURCES, ERR_INVALID_TARGET } from '/game/constants';
 import { } from '/arena';
@@ -7,6 +7,8 @@ import {QUEUED, ALIVE, FAILURE, RUNNING, SUCCESS } from './global';
 import {selfDefense} from './defensive';
 import { attack } from './offensive';
 import { harvestFromSource, findCenterOfUnits, withdrawFromSource, depositToSpawner} from './neutral';
+
+import { drawLineToTarget } from './debugHelper';
 
 // ========================================
 //          *****Creeps*****
@@ -50,8 +52,6 @@ function minerRole() {
    else if(this.creep.transfer(this.spawner, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) this.creep.moveTo(this.spawner);
 };
 
-// this grabs the capacity before it actually spawns the creep
-// fix success condition
 function extensionRushFillRole()  {
   if(!this.spawner) this.spawner = getObjectsByPrototype(StructureSpawn)[0];
   if(!this.energySource) this.energySource = getObjectsByPrototype(StructureContainer)[0];
@@ -67,14 +67,13 @@ function extensionRushFillRole()  {
 }
 
 // sources spawn every 50 ticks
-function extensionRushBuildRole() {
+function extensionRushBuildRole() { // extensions not ideal
   //if(!this.sources || getTicks() % 50 == 0)
 
   if(!this.constSite) {
     this.source = getObjectsByPrototype(StructureContainer).filter(s => s.x > 4 && s.x < 95);
     if(this.source){
       var closestSource = findClosestByPath(this.creep, this.source);
-      console.log(closestSource + closestSource.position + this.source.length);
       var xOff = closestSource.x + 1;
       var yOff = closestSource.y;
 
@@ -82,13 +81,25 @@ function extensionRushBuildRole() {
       this.currentSource = closestSource;
     }
   } else{
-    if(!this.constSite) this.constSite = getObjectsByPrototype(ConstructionSite)[0];
-    if(this.creep.build(this.constSite.object) == ERR_NOT_IN_RANGE) this.creep.moveTo(this.constSite.object);
 
+    // TODO: to new node
+    if(!this.constSite) this.constSite = findClosestByRange(this.creep, getObjectsByPrototype(ConstructionSite));
+    if(!this.currentSource || !this.currentSource.x || this.creep.store.getFreeCapacity()) this.currentSource = findClosestByRange(this.creep, getObjectsByPrototype(StructureContainer));
+
+    if(!this.currentSource) return FAILURE;
+
+    if(!this.currentSource.x) return RUNNING;
+    drawLineToTarget(this.creep, this.currentSource);
+    withdrawFromSource(this.creep, this.currentSource);
+
+    if(this.creep.build(this.constSite.object) == ERR_NOT_IN_RANGE) this.creep.moveTo(this.constSite.object);
     if(!this.constSite || this.creep.build(this.constSite.object) == ERR_INVALID_TARGET) return FAILURE;
-  }
+    console.log("didn't fail");
+
+}
   return RUNNING;
 }
+
 
 // ========================================
 //          *****Squads*****
@@ -113,6 +124,7 @@ export function defaultSquadRole() {
   });
 } // legacy
 
+// TODO: export tree to class, add binary search
 var currentNode;
 export function extensionRushSquadRole() { // extensions not ideal for arena.
   if(!this.tree) this.tree = setUpBehaviorTree();

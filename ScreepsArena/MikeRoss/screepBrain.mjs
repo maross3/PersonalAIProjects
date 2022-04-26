@@ -23,7 +23,7 @@ function getPreOrder(root){
   }
 
   return result;
-} // PRE order
+} // PRE order // PRE order
 
 function getInOrder(root){ // IN order
   var stack = [];
@@ -77,7 +77,7 @@ function getOrderedLevels(root){
     stack = level;
   }
   return result;
-}
+} // LEVEL order
 
 // ========================================
 //     *****recursive traversal*****

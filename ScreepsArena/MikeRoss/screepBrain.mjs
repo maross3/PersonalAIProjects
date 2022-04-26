@@ -1,6 +1,6 @@
 
 // return valid nodes from root of tree
-function getValidNodes(root){
+function getPreOrder(root){
 
   if(!root) return [];
   if(!root.left && !root.right) return [root.val];
@@ -20,6 +20,22 @@ function getValidNodes(root){
       }
   }
 
+  return result;
+}
+
+function getPostOrder(root){
+  if(!root) return [];
+
+  var stack = [root];
+  var result = [];
+
+  while(stack.length > 0){
+      root = stack.pop();
+      result.unshift(root.val);
+
+      if(root.left) stack.push(root.left);
+      if(root.right) stack.push(root.right);
+  }
   return result;
 }
 

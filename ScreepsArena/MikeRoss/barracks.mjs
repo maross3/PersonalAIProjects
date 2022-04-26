@@ -1,6 +1,6 @@
-import { getObjectsByPrototype, getTicks } from '/game/utils';
-import { Creep, StructureSpawn, StructureContainer, Source } from '/game/prototypes';
-import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK } from '/game/constants';
+import { getObjectsByPrototype, getTicks, findInRange, createConstructionSite, findClosestByPath } from '/game/utils';
+import { Creep, StructureSpawn, StructureContainer, Source, StructureExtension, ConstructionSite } from '/game/prototypes';
+import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK, ERR_NOT_ENOUGH_RESOURCES, ERR_INVALID_TARGET } from '/game/constants';
 import { } from '/arena';
 
 import {QUEUED, ALIVE, FAILURE, RUNNING, SUCCESS } from './global';
@@ -68,7 +68,25 @@ function extensionRushFillRole()  {
 
 // sources spawn every 50 ticks
 function extensionRushBuildRole() {
-  console.log("building ramparts");
+  //if(!this.sources || getTicks() % 50 == 0)
+
+  if(!this.constSite) {
+    this.source = getObjectsByPrototype(StructureContainer).filter(s => s.x > 4 && s.x < 95);
+    if(this.source){
+      var closestSource = findClosestByPath(this.creep, this.source);
+      console.log(closestSource + closestSource.position + this.source.length);
+      var xOff = closestSource.x + 1;
+      var yOff = closestSource.y;
+
+      this.constSite = createConstructionSite(xOff, yOff, StructureExtension);
+      this.currentSource = closestSource;
+    }
+  } else{
+    if(!this.constSite) this.constSite = getObjectsByPrototype(ConstructionSite)[0];
+    if(this.creep.build(this.constSite.object) == ERR_NOT_IN_RANGE) this.creep.moveTo(this.constSite.object);
+
+    if(!this.constSite || this.creep.build(this.constSite.object) == ERR_INVALID_TARGET) return FAILURE;
+  }
   return RUNNING;
 }
 
@@ -96,14 +114,12 @@ export function defaultSquadRole() {
 } // legacy
 
 var currentNode;
-export function extensionRushSquadRole() { // behavior tree to rush ramps
+export function extensionRushSquadRole() { // extensions not ideal for arena.
   if(!this.tree) this.tree = setUpBehaviorTree();
   if(this.numberOfUnits == 0) return;
 
   if(!currentNode) currentNode = this.tree.left;
-
   var closestThreat = selfDefense(findCenterOfUnits(this.units));
-
   this.units.forEach((unit, i) => {
 
     if(currentNode.status == RUNNING) currentNode = currentNode;
@@ -125,6 +141,7 @@ function setUpBehaviorTree(){
   var root = Object.create(node);
   var left = Object.create(node);
   var right = Object.create(node);
+
   root.left = left;
   root.right = right;
 

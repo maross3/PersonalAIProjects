@@ -2,7 +2,7 @@
 // ========================================
 //    *****iterative traversal*****
 // ========================================
-function getPreOrder(root){
+function getPreOrder(root){ // PRE order
 
   if(!root) return [];
   if(!root.left && !root.right) return [root.val];
@@ -23,7 +23,7 @@ function getPreOrder(root){
   }
 
   return result;
-} // PRE order // PRE order
+}
 
 function getInOrder(root){ // IN order
   var stack = [];
@@ -42,7 +42,7 @@ function getInOrder(root){ // IN order
   return result;
 }
 
-function getPostOrder(root){
+function getPostOrder(root){  // POST order
   if(!root) return [];
 
   var stack = [root];
@@ -56,9 +56,9 @@ function getPostOrder(root){
       if(root.right) stack.push(root.right);
   }
   return result;
-} // POST order
+}
 
-function getOrderedLevels(root){
+function getOrderedLevels(root){ // LEVEL order
   var result = [];
   var stack = [root];
 
@@ -77,7 +77,7 @@ function getOrderedLevels(root){
     stack = level;
   }
   return result;
-} // LEVEL order
+}
 
 // ========================================
 //     *****recursive traversal*****
@@ -108,18 +108,18 @@ function recursiveInOrderHelper(root, stck){ // IN order helper
     recursiveInOrderHelper(root.right, stck);
 }
 
-function getRecursivePostOrder(root){
+function getRecursivePostOrder(root){ //POST order
   stack = [];
   recursivePostOrderHelper(root, stack);
   return stack;
-} //POST order
+}
 
-function recursivePostOrderHelper(root, stck) {
+function recursivePostOrderHelper(root, stck) { //POST order helper
   if(!root) return;
   recursivePostOrderHelper(root.left, stack);
   recursivePostOrderHelper(root.right, stack);
   stack.push(root.val);
-} //POST order helper // POST order helper
+}
 
 function getRecursiveLevelOrder(root){ // LEVEL order
     this.levels = [];
@@ -128,7 +128,7 @@ function getRecursiveLevelOrder(root){ // LEVEL order
     return levels;
 }
 
-function recursiveLevelOrderHelper(root, level){
+function recursiveLevelOrderHelper(root, level){ // LEVEL order helper
   if(this.levels.length == level)
     this.levels.push([]);
 
@@ -140,7 +140,7 @@ function recursiveLevelOrderHelper(root, level){
 
   if(root.right)
     recursiveLevelOrderHelper(root.right, level);
-} // LEVEL order helper
+}
 
 var node = {
   left: 0,

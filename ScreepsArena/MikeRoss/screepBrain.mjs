@@ -58,6 +58,27 @@ function getPostOrder(root){
   return result;
 } // POST order
 
+function getOrderedLevels(root){
+  var result = [];
+  var stack = [root];
+
+  while(stack.length > 0){
+    var level = [];
+    var subArr = [];
+
+    for(let node of stack){
+      if(node){
+        subArr.push(node.val);
+        level.push(node.left, node.right);
+      }
+    }
+
+    if(subArr.length > 0) result.push(subArr);
+    stack = level;
+  }
+  return result;
+}
+
 // ========================================
 //     *****recursive traversal*****
 // ========================================
@@ -98,7 +119,28 @@ function recursivePostOrderHelper(root, stck) {
   recursivePostOrderHelper(root.left, stack);
   recursivePostOrderHelper(root.right, stack);
   stack.push(root.val);
-} //POST order helper
+} //POST order helper // POST order helper
+
+function getRecursiveLevelOrder(root){ // LEVEL order
+    this.levels = [];
+    if(!root) return levels;
+    recursiveLevelOrderHelper(root, 0);
+    return levels;
+}
+
+function recursiveLevelOrderHelper(root, level){
+  if(this.levels.length == level)
+    this.levels.push([]);
+
+  this.levels[level].push(root.val);
+  level++;
+
+  if(root.left)
+    recursiveLevelOrderHelper(root.left, level);
+
+  if(root.right)
+    recursiveLevelOrderHelper(root.right, level);
+} // LEVEL order helper
 
 var node = {
   left: 0,

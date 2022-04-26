@@ -100,7 +100,6 @@ function extensionRushBuildRole() { // extensions not ideal
   return RUNNING;
 }
 
-
 // ========================================
 //          *****Squads*****
 // ========================================
@@ -125,6 +124,7 @@ export function defaultSquadRole() {
 } // legacy
 
 // TODO: export tree to class, add binary search
+// fix structure.
 var currentNode;
 export function extensionRushSquadRole() { // extensions not ideal for arena.
   if(!this.tree) this.tree = setUpBehaviorTree();

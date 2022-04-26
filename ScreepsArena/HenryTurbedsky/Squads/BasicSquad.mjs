@@ -45,11 +45,7 @@ export class BasicSquad {
       }
     }
 
-
-
-
   };
-
 
 
 }

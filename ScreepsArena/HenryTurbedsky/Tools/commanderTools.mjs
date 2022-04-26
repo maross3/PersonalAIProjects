@@ -12,6 +12,12 @@ import * as SquadTools from './squadTools'
 
 
 
+
+
+
+
+
+
 export function queueSquadToArray(squad, bodyQueue){
   squad.unfilledRoles?.forEach((role, i) =>{
     this.queueRoleToArray(role, bodyQueue);
@@ -25,15 +31,35 @@ export function queueBodyToArray(body, bodyQueue){
 }
 
 
-export function spawnBodyFromQueue(spawner, bodyQueue)
+export function spawnFirstInQueue(spawner, bodyQueue)
 {
+  if(bodyQueue.length == 0) return false;
   var newCreep = spawner.spawnCreep(bodyQueue[0]).object;
   if(newCreep) bodyQueue.shift();
   return newCreep;
 }
 
 
+// Removes full squads from squadArray and returns an array newly actived squads.
+export function enrollCreepsToSquadsInArray(squadArray, creepArray){
+  var activatedSquads = [];
+  if (squadArray.length <= 0) return activatedSquads;
 
+  squadArray.forEach((squad, i)=>{
+    if(squad.currentRoles.length == 0){squad.active = false;}
+
+    if(SquadTools.fillSquad(squad, creepArray)){
+      squadArray.splice(i,1);
+    }
+
+    if(squad.currentRoles.length > 0 && squad.active == false){
+      squad.active = true;
+      activatedSquads.push(squad);
+    }
+  });
+
+  return activatedSquads;
+}
 
 
 

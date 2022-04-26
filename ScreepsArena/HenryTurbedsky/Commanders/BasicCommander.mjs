@@ -11,7 +11,7 @@ import * as SquadTools from '../Tools/squadTools'
 import * as CTools from '../Tools/commanderTools'
 
 import { BasicSquad } from '../Squads/BasicSquad'
-
+import { Sheild } from '../Squads/Sheild'
 
 
 
@@ -45,29 +45,18 @@ export class BasicCommander {
   run()
   {
     if(!this.spawns[0].spawner) this.spawns[0].spawner = getObjectsByPrototype(StructureSpawn).find(s => s.my);
-    var squad = new BasicSquad();
+    var squadBasicSquad = new BasicSquad();
+    var squadSheild = new Sheild();
 
-    if(getTicks() < 5)
-    {
-      CTools.queueSquadToArray(squad, this.spawns[0].bodyQueue);
-      this.squadQueue.push(squad);
-    }
+    squadSheild.setTarget({x:35, y:35});
 
+    this.putSquadOnQueue(squadBasicSquad, this.spawns[0])
+    this.putSquadOnQueue(squadSheild, this.spawns[0])
 
-    if(this.spawns[0].bodyQueue.length != 0){
-      var newCreep = CTools.spawnBodyFromQueue(this.spawns[0].spawner, this.spawns[0].bodyQueue);
-      if(newCreep) this.creepPool.push(newCreep);
-    }
+    this.runCreepSpawningQueues();
 
+    this.squadList = this.squadList.concat(CTools.enrollCreepsToSquadsInArray(this.squadQueue, this.creepPool));
 
-    if (this.spawns[0].bodyQueue.length > 0){
-      this.squadQueue.forEach((squad, i)=>{
-        if(SquadTools.fillSquad(squad, this.creepPool)){
-          this.squadList.push(squad);
-          this.squadQueue.splice(i,1);
-        }
-      });
-    }
 
     if(this.squadList.length > 0){
       this.squadList.forEach((squad, i)=>{
@@ -75,18 +64,25 @@ export class BasicCommander {
       });
     }
 
-
-
     if(this.debug){
       this.debugCode();
     }
-    // console.log("this.squadQueue");
-    // console.log(this.squadQueue);
-    // console.log("this.squadList");
-    // console.log(this.squadList);
   }
 
 
 
+
+
+
+  putSquadOnQueue(squad, spawn){
+    CTools.queueSquadToArray(squad, spawn.bodyQueue);
+    this.squadQueue.push(squad);
+  }
+
+  runCreepSpawningQueues(){
+      this.spawns.forEach((item, i) => {
+      var newCreep = CTools.spawnFirstInQueue(item.spawner, item.bodyQueue);
+      if(newCreep) this.creepPool.push(newCreep);
+    });}
 
 }

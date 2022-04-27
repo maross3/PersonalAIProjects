@@ -2,11 +2,13 @@ import { } from '/game/constants';
 import { Creep, StructureSpawn, StructureContainer, Source } from '/game/prototypes';
 import { getObjectsByPrototype, getCpuTime } from '/game/utils';
 
-import {QUEUED, ALIVE } from './global'
-import { minerCreep, baseSquad, generalistWorkerCreep, rampartWorkerCreep } from './barracks'
-import {visualizeSquad } from './debugHelper'
-import { harvestFromSource, spawnSquad } from './neutral'
+import {QUEUED, ALIVE } from './global';
+import { minerCreep, baseSquad, generalistWorkerCreep, rampartWorkerCreep } from './barracks';
+import {visualizeSquad } from './debugHelper';
+import { harvestFromSource, spawnSquad } from './neutral';
 
+
+import { testingtesting } from './screepBrain';
 var spawner;
 
 
@@ -33,7 +35,7 @@ squadOne.units = [];
 // assign spawner to squads
 
 export function loop() {
-
+  testingtesting();
   if(!spawner) spawner = getObjectsByPrototype(StructureSpawn)[0];
 
   // baseSquad logic to be moved

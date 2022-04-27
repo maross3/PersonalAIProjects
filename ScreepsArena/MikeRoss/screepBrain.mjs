@@ -1,4 +1,7 @@
-
+import { getObjectsByPrototype, getTicks, findInRange, createConstructionSite, findClosestByPath, findClosestByRange } from '/game/utils';
+import { Creep, StructureSpawn, StructureContainer, Source, StructureExtension, ConstructionSite } from '/game/prototypes';
+import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK, ERR_NOT_ENOUGH_RESOURCES, ERR_INVALID_TARGET } from '/game/constants';
+import { } from '/arena';
 // ========================================
 //    *****iterative traversal*****
 // ========================================
@@ -121,18 +124,19 @@ function recursivePostOrderHelper(root, stck) { //POST order helper
   stack.push(root.val);
 }
 
+var levels;
 function getRecursiveLevelOrder(root){ // LEVEL order
-    this.levels = [];
+    levels = [];
     if(!root) return levels;
     recursiveLevelOrderHelper(root, 0);
     return levels;
 }
 
 function recursiveLevelOrderHelper(root, level){ // LEVEL order helper
-  if(this.levels.length == level)
-    this.levels.push([]);
+  if(levels.length == level)
+    levels.push([]);
 
-  this.levels[level].push(root.val);
+  levels[level].push(root.val);
   level++;
 
   if(root.left)
@@ -142,9 +146,46 @@ function recursiveLevelOrderHelper(root, level){ // LEVEL order helper
     recursiveLevelOrderHelper(root.right, level);
 }
 
-var node = {
-  left: 0,
-  right: 0,
-  status: FAILURE,
-  behavior: 0
+
+// TODO: clean this up
+class bnode {
+
+    static behavior;
+    static val;
+
+    constructor(val, behavior){
+      this.behavior = behavior;
+      this.val = val;
+
+      this.left = null;
+      this.right = null;
+      this.status = null;
+  }
+}
+
+var root;
+var treeRoot;
+
+function createRecursiveTree(arr, root, i) {
+    if (i < arr.length) {
+        let temp = new bnode(arr[i], arr[i]);
+        root = temp;
+
+        root.left = createRecursiveTree(arr, root.left, 2 * i + 1);
+        root.right = createRecursiveTree(arr, root.right, 2 * i + 2);
+    }
+    return root;
+}
+
+var orderedTree;
+var testTree;
+
+export function testingtesting(){
+  if(!orderedTree){
+    treeRoot = new bnode(0, 0)
+    var testing = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    testTree = createRecursiveTree(testing, treeRoot, 0);
+    orderedTree = getRecursiveLevelOrder(testTree);
+  }
+    console.log(orderedTree);
 }

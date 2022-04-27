@@ -1,4 +1,4 @@
-import { getObjectsByPrototype, createConstructionSite } from '/game/utils';
+import { getObjectsByPrototype, getRange, findClosestByPath, findClosestByRange, createConstructionSite } from '/game/utils';
 import { Creep, StructureSpawn, StructureContainer, Source, ConstructionSite } from '/game/prototypes';
 import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE } from '/game/constants';
 import { searchPath } from 'game/path-finder';

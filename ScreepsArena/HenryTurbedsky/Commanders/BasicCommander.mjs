@@ -50,8 +50,10 @@ export class BasicCommander {
 
     squadSheild.setTarget({x:35, y:35});
 
-    this.putSquadOnQueue(squadBasicSquad, this.spawns[0])
-    this.putSquadOnQueue(squadSheild, this.spawns[0])
+    if(getTicks() == 1){
+      this.putSquadOnQueue(squadBasicSquad, this.spawns[0]);
+      this.putSquadOnQueue(squadSheild, this.spawns[0]);
+    }
 
     this.runCreepSpawningQueues();
 

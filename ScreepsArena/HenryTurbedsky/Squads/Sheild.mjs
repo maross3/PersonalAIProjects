@@ -1,6 +1,6 @@
-import { getObjectsByPrototype, getRange, findClosestByRange, } from '/game/utils';
+import { getObjectsByPrototype, getRange, findClosestByPath, findClosestByRange } from '/game/utils';
 import { Creep, StructureSpawn, StructureContainer, Source, ConstructionSite, StructureTower } from '/game/prototypes';
-import { RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE } from '/game/constants';
+import { RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK, TOUGH, HEAL, RANGED_ATTACK } from '/game/constants';
 import { Visual } from '/game/visual';
 import { getTicks } from 'game'
 
@@ -32,8 +32,7 @@ export class Sheild {
 
     this.debugColor = "#ffffff";
     this.debugCode = SquadTools.debugSquad;
-    this.debug = true;
-
+    this.debug = false;
   }
 
   act()
@@ -49,10 +48,10 @@ export class Sheild {
         roles.move(this.target);
       });
     }
-    else if (getRange(SquadTools.squadCenter(this), findClosestByRange(SquadTools.squadCenter(this), getObjectsByPrototype(Creep).filter(c => !c.my))) < 20)
+    else if (getRange(SquadTools.squadCenter(this), findClosestByRange(SquadTools.squadCenter(this), getObjectsByPrototype(Creep).filter(c => !c.my))) < 15)
     {
       this.currentRoles.forEach((roles, i)=>{
-        roles.act();
+        roles.act({x:25, y:25});
       });
     }
     else

@@ -8,19 +8,11 @@ import { Visual } from '/game/visual';
 import * as Tools from '../Tools/tools'
 import * as RoleTools from '../Tools/roleTools'
 
-import * as Defensive from '../Actions/defensive'
-import * as Neutral from '../Actions/neutral'
-import * as Offensive from '../Actions/offensive'
 
 
-export var sheild = {
-  roleType: "sheild",
-  creep: "none",
-  bodyMakeUp: [ ATTACK, MOVE, TOUGH, TOUGH, TOUGH ],
-  act: Defensive.guardTarget,
-  ideal: Neutral.moveCircle,
-  retreat: Neutral.move,
-  move: Neutral.move,
-  target: null,
-  debug: RoleTools.debugRole,
-};
+
+export function guardTarget(target){
+  if(!target) target = this.target;
+  var enememy = findClosestByRange(target, getObjectsByPrototype(Creep).filter(c => !c.my))
+  if(this.creep.attack(enememy) == ERR_NOT_IN_RANGE) this.creep.moveTo(enememy);
+}

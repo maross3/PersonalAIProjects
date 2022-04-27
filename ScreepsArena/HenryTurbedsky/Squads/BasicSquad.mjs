@@ -1,6 +1,6 @@
 import { getObjectsByPrototype } from '/game/utils';
 import { Creep, StructureSpawn, StructureContainer, Source, ConstructionSite, StructureTower } from '/game/prototypes';
-import { RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE } from '/game/constants';
+import { RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK, TOUGH, HEAL, RANGED_ATTACK } from '/game/constants';
 import { Visual } from '/game/visual';
 
 import * as Tools from '../Tools/tools'
@@ -33,38 +33,23 @@ export class BasicSquad {
     this.debug = false;
   }
 
-  act(){
-    if(this.currentRoles.length > 0){
-      this.currentRoles.forEach((roles, i)=>{
-        roles.act();
-      });
+    act(){
+      if(this.currentRoles.length > 0){
+        this.currentRoles.forEach((roles, i)=>{
+          roles.act();
+        });
 
-      if(this.debug){
-        SquadTools.squadDebugLines(this);
-        this.debugCode();
+        if(this.debug){
+          SquadTools.squadDebugLines(this);
+          this.debugCode();
+        }
       }
+
+
+
     }
 
-  };
-
-
-}
 
 
 
-
-
-// BuryDead()
-// {
-//   var temp;
-//   this.currentSquad.forEach((creepRole, i) => {
-//     if(!creepRole.IsAlive())
-//     {
-//       this.unfilledRoles.push(currentRoles[i]);
-//       temp.push(i);
-//     }
-//   });
-//   temp?.forEach((index, i) => {
-//     this.currentSquad.splice(index-i, 1);
-//   });
-// }
+  }

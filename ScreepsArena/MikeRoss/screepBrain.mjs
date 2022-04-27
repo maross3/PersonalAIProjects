@@ -1,191 +1,193 @@
-import { getObjectsByPrototype, getTicks, findInRange, createConstructionSite, findClosestByPath, findClosestByRange } from '/game/utils';
-import { Creep, StructureSpawn, StructureContainer, Source, StructureExtension, ConstructionSite } from '/game/prototypes';
-import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK, ERR_NOT_ENOUGH_RESOURCES, ERR_INVALID_TARGET } from '/game/constants';
-import { } from '/arena';
+export class binaryBrain {
+
+  // TODO:
+  // convert all root parameters to use this.root
+  // create a helper function that executes the tree in the sorted order
+  static root;
+  static levels;
+  static depth;
+
+  constructor(behaviors){
+    console.log(behaviors);
+    var curNode = new binaryNode(behaviors[0], behaviors[0]);
+
+    this.createRecursiveTree(behaviors, curNode , 0);
+    this.getRecursiveLevelOrder();
+    this.depth = this.levels.length;
+  }
+
+  createRecursiveTree(arr, node, i) { // build tree
+      let temp = new binaryNode(arr[i], arr[i]);
+      node = temp;
+
+      if(!this.root) this.root = node;
+      if (i < arr.length) {
+        if(2 * i + 1 < arr.length)
+          node.left = this.createRecursiveTree(arr, node.left, 2 * i + 1);
+
+        if(2 * i + 2 < arr.length)
+          node.right = this.createRecursiveTree(arr, node.right, 2 * i + 2);
+      }
+      return node;
+  }
+
 // ========================================
 //    *****iterative traversal*****
 // ========================================
-function getPreOrder(root){ // PRE order
+  getPreOrder(root){ // PRE order
 
-  if(!root) return [];
-  if(!root.left && !root.right) return [root.val];
+    if(!root) return [];
+    if(!root.left && !root.right) return [root.val];
 
-  var stack = [root];
-  var result = [];
+    var stack = [root];
+    var result = [];
 
-  while(typeof root !== 'undefined'){
-      root = stack.pop();
+    while(typeof root !== 'undefined'){
+        root = stack.pop();
 
-      if(root)
-      {
-          result.push(root);
+        if(root)
+        {
+            result.push(root);
 
-          if(root.right) stack.push(root.right);
-          if(root.left) stack.push(root.left);
-      }
-  }
-
-  return result;
-}
-
-function getInOrder(root){ // IN order
-  var stack = [];
-  var result = [];
-
-  var curNode = root;
-  while(curNode || stack.length > 0){
-    while(curNode){
-      stack.push(curNode);
-      curNode = curNode.left;
-  }
-    curNode = stack.pop();
-    result.push(curNode.val);
-    curNode = curNode.right;
-  }
-  return result;
-}
-
-function getPostOrder(root){  // POST order
-  if(!root) return [];
-
-  var stack = [root];
-  var result = [];
-
-  while(stack.length > 0){
-      root = stack.pop();
-      result.unshift(root.val);
-
-      if(root.left) stack.push(root.left);
-      if(root.right) stack.push(root.right);
-  }
-  return result;
-}
-
-function getOrderedLevels(root){ // LEVEL order
-  var result = [];
-  var stack = [root];
-
-  while(stack.length > 0){
-    var level = [];
-    var subArr = [];
-
-    for(let node of stack){
-      if(node){
-        subArr.push(node.val);
-        level.push(node.left, node.right);
-      }
+            if(root.right) stack.push(root.right);
+            if(root.left) stack.push(root.left);
+        }
     }
 
-    if(subArr.length > 0) result.push(subArr);
-    stack = level;
+    return result;
   }
-  return result;
-}
 
-// ========================================
-//     *****recursive traversal*****
-// ========================================
-function getRecursivePreOrder(root){ // PRE order
-  var stack = [];
-  recursivePreOrderHelper(root, stack);
-  return stack;
-}
+  getInOrder(root){ // IN order
+    var stack = [];
+    var result = [];
 
-function recursivePreOrderHelper(root, stck){ // PRE order helper
-  if(!root) return;
-  stck.push(root.val);
-  recursivePreOrderHelper(root.left, stck);
-  recursivePreOrderHelper(root.right, stck);
-}
+    var curNode = root;
+    while(curNode || stack.length > 0){
+      while(curNode){
+        stack.push(curNode);
+        curNode = curNode.left;
+    }
+      curNode = stack.pop();
+      result.push(curNode.val);
+      curNode = curNode.right;
+    }
+    return result;
+  }
 
-function getRecursiveInOrder(root){ // IN order
-  var stack = [];
-  recursiveInOrderHelper(root, stack);
-  return stack;
-}
+  getPostOrder(root){  // POST order
+    if(!root) return [];
 
-function recursiveInOrderHelper(root, stck){ // IN order helper
+    var stack = [root];
+    var result = [];
+
+    while(stack.length > 0){
+        root = stack.pop();
+        result.unshift(root.val);
+
+        if(root.left) stack.push(root.left);
+        if(root.right) stack.push(root.right);
+    }
+    return result;
+  }
+
+  getOrderedLevels(root){ // LEVEL order
+    var result = [];
+    var stack = [root];
+
+    while(stack.length > 0){
+      var level = [];
+      var subArr = [];
+
+      for(let node of stack){
+        if(node){
+          subArr.push(node.val);
+          level.push(node.left, node.right);
+        }
+      }
+
+      if(subArr.length > 0) result.push(subArr);
+      stack = level;
+    }
+    return result;
+  }
+
+  // ========================================
+  //     *****recursive traversal*****
+  // ========================================
+  getRecursivePreOrder(root){ // PRE order
+    var stack = [];
+    recursivePreOrderHelper(root, stack);
+    return stack;
+  }
+
+  recursivePreOrderHelper(root, stck){ // PRE order helper
     if(!root) return;
-    recursiveInOrderHelper(root.left, stck);
     stck.push(root.val);
-    recursiveInOrderHelper(root.right, stck);
+    recursivePreOrderHelper(root.left, stck);
+    recursivePreOrderHelper(root.right, stck);
+  }
+
+  getRecursiveInOrder(root){ // IN order
+    var stack = [];
+    recursiveInOrderHelper(root, stack);
+    return stack;
+  }
+
+  recursiveInOrderHelper(root, stck){ // IN order helper
+      if(!root) return;
+      recursiveInOrderHelper(root.left, stck);
+      stck.push(root.val);
+      recursiveInOrderHelper(root.right, stck);
+  }
+
+  getRecursivePostOrder(root){ //POST order
+    stack = [];
+    recursivePostOrderHelper(root, stack);
+    return stack;
+  }
+
+  recursivePostOrderHelper(root, stck) { //POST order helper
+    if(!root) return;
+    recursivePostOrderHelper(root.left, stack);
+    recursivePostOrderHelper(root.right, stack);
+    stack.push(root.val);
+  }
+
+
+  getRecursiveLevelOrder(){ // LEVEL order
+      this.levels = [];
+      if(!this.root) return this.levels;
+      this.recursiveLevelOrderHelper(this.root, 0);
+      return this.levels;
+  }
+
+  recursiveLevelOrderHelper(node, level){ // LEVEL order helper
+    if(this.levels.length == level)
+      this.levels.push([]);
+
+    this.levels[level].push(node);
+    level++;
+
+    if(node.left)
+      this.recursiveLevelOrderHelper(node.left, level);
+
+    if(node.right)
+      this.recursiveLevelOrderHelper(node.right, level);
+  }
 }
 
-function getRecursivePostOrder(root){ //POST order
-  stack = [];
-  recursivePostOrderHelper(root, stack);
-  return stack;
-}
+// TODO: clean this up, create a root node class
+class binaryNode {
 
-function recursivePostOrderHelper(root, stck) { //POST order helper
-  if(!root) return;
-  recursivePostOrderHelper(root.left, stack);
-  recursivePostOrderHelper(root.right, stack);
-  stack.push(root.val);
-}
+  static behavior;
+  static val;
 
-var levels;
-function getRecursiveLevelOrder(root){ // LEVEL order
-    levels = [];
-    if(!root) return levels;
-    recursiveLevelOrderHelper(root, 0);
-    return levels;
-}
+  static left;
+  static right;
+  static status;
 
-function recursiveLevelOrderHelper(root, level){ // LEVEL order helper
-  if(levels.length == level)
-    levels.push([]);
-
-  levels[level].push(root.val);
-  level++;
-
-  if(root.left)
-    recursiveLevelOrderHelper(root.left, level);
-
-  if(root.right)
-    recursiveLevelOrderHelper(root.right, level);
-}
-
-
-// TODO: clean this up
-class bnode {
-
-    static behavior;
-    static val;
-
-    constructor(val, behavior){
+  constructor(val, behavior){
       this.behavior = behavior;
       this.val = val;
-
-      this.left = null;
-      this.right = null;
-      this.status = null;
   }
-}
-
-var root;
-var treeRoot;
-
-function createRecursiveTree(arr, root, i) {
-    if (i < arr.length) {
-        let temp = new bnode(arr[i], arr[i]);
-        root = temp;
-
-        root.left = createRecursiveTree(arr, root.left, 2 * i + 1);
-        root.right = createRecursiveTree(arr, root.right, 2 * i + 2);
-    }
-    return root;
-}
-
-var orderedTree;
-var testTree;
-
-export function testingtesting(){
-  if(!orderedTree){
-    treeRoot = new bnode(0, 0)
-    var testing = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    testTree = createRecursiveTree(testing, treeRoot, 0);
-    orderedTree = getRecursiveLevelOrder(testTree);
-  }
-    console.log(orderedTree);
 }

@@ -8,12 +8,8 @@ import {visualizeSquad } from './debugHelper';
 import { harvestFromSource, spawnSquad } from './neutral';
 
 
-import { testingtesting } from './screepBrain';
+import { binaryBrain } from './screepBrain';
 var spawner;
-
-
-
-
 
 var squadOne = Object.create(baseSquad);
 
@@ -22,28 +18,23 @@ creep1.squad = squadOne;
 
 var creep2 = Object.create(rampartWorkerCreep);
 creep2.squad = squadOne;
-//var squadTwo = Object.create(baseSquad);
 
 squadOne.queuedUnits = [creep1, creep2];
 squadOne.units = [];
 
-//var squadTwo = Object.create(baseSquad);
-
-//squadTwo.queuedUnits = [creep3, creep4, creep5];
-//squadTwo.units = [];
-
-// assign spawner to squads
+var testArray = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
+var brain;
+var brainLevels;
 
 export function loop() {
-  testingtesting();
+  if(!brain) brain = new binaryBrain(testArray);
   if(!spawner) spawner = getObjectsByPrototype(StructureSpawn)[0];
 
   // baseSquad logic to be moved
   if(squadOne.numberOfUnits < squadOne.queuedUnits.length) spawnSquad(squadOne, spawner);
   //else if (squadTwo.numberOfUnits < squadTwo.queuedUnits.length) spawnSquad(squadTwo, spawner);
-
   if(squadOne.numberOfUnits > 0) squadOne.act();
   //if(squadTwo.numberOfUnits > 0) squadTwo.act();
-
+  if(brain) console.log(brain.levels);
   console.log(getCpuTime()); //debug
 }

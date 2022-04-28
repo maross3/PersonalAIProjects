@@ -35,6 +35,6 @@ export function loop() {
   //else if (squadTwo.numberOfUnits < squadTwo.queuedUnits.length) spawnSquad(squadTwo, spawner);
   if(squadOne.numberOfUnits > 0) squadOne.act();
   //if(squadTwo.numberOfUnits > 0) squadTwo.act();
-  if(brain) console.log(brain.levels);
+  // if(brain) console.log(brain.levels);
   console.log(getCpuTime()); //debug
 }

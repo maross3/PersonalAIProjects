@@ -37,26 +37,9 @@ export class binaryBrain {
       return node;
   }
 
+  // TODO: better function name that fits .ToString/.ToTree
+  // parsing helper for encoding/decoding
   addFunctionsToTree(arr){
-    // pseudo:
-    // make node make a decision
-    // returns LEFT || RIGHT
-    // The next node will be called to do the same, or perform actions
-
-    // how do we order the nodes?
-    // what detemines the order?
-
-    // helper function?
-    // input: array of functions
-    // output: array sorted so it adheres to post order traversal?
-
-    // the desc doubles. first functions desc = 23,
-    // 2 desc == 4,5; 3 desc == 6, 7.
-    // 4 ==8; 5 == 10, 11; 6 == 12, 13; 7 == 14, 15
-
-    // make an object that takes in a main funtion, and the left and right functions
-    // binaryBrain.addFunctionsToTree(array);
-    //
     stack = [];
     for(let i = 0; i < arr.length / 3; i++){
       stack.push(arr[i]);
@@ -72,6 +55,13 @@ export class binaryBrain {
     }
 
   }
+
+// ========================================
+//    *****Execution of Nodes*****
+// ========================================
+  // should units traverse tree?
+  // should tree command units?
+
 // ========================================
 //    *****iterative traversal*****
 // ========================================
@@ -225,7 +215,7 @@ class binaryNode {
 
   static left;
   static right;
-  static status;
+  static status; // val? if not indexing. Do we need an index?
 
   constructor(val, behavior){
       this.behavior = behavior;

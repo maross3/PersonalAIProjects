@@ -35,7 +35,7 @@ var rightBranchObj = {
 }
 
 var build = {
-  creep: "empty build",
+  creep: "Builder Creep",
   body: [WORK, CARRY, MOVE],
   ratio: [0.5,0.25,0.25],
   squad: "none",
@@ -55,41 +55,52 @@ assignLeftBranchUnit(build);
 //      *****_dummy functions*****
 // ========================================
 function hasJob(unit){
+  return "Does " + unit.creep + " have a job?"
   return unit.jobType;
 }
 
 function hasCombatParts(unit){
+  return "Does " + unit.creep + " have attack parts?"
   return unit.body.includes(ATTACK);
 }
 
 // home base jobs
 function patrolBase(unit){
-  console.log(unit.creep + " is patroling base");
+  return unit.creep + " is patroling the base!";
 }
 function fillSpawn(unit){
-  console.log(unit.creep + "is filling spawn!");
+  return unit.creep + " is filling the base spawn!";
 }
 function buildDefenses(unit){
-  console.log(unit.creep + "building defenses!");
+  return unit.creep + " is building base defenses!";
 }
 
 // feild jobs
 function findAndBuild(unit){
-  console.log(unit.creep + "finding and building!");
+  return unit.creep + " is finding and building in the field!";
 }
 
 function findAndFill(unit){
-  console.log(unit.creep + "finding and filling!")
+  return unit.creep + " is finding and filling in the field!";
 }
 
 function attack(unit, target){
-  console.log("ATTACKING!");
+  return unit + " is ATTACKING " + target + "!";
+}
+function idle(unit){
+  return unit.creep + " is idle!";
 }
 
 // ========================================
 //   *****Debug Brain Creation*****
 // ========================================
-var testArray = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+var testArray = [0, leftBranchObj.hasJob(build), idle(build), BASE, FIELD, rightBranchObj.hasCombatParts(build),
+                  rightBranchObj.combatNegative[0](build), leftBranchObj.jobOneFns[0](build), leftBranchObj.jobOneFns[1](build),
+                    leftBranchObj.jobTwoFns[0](build), leftBranchObj.jobTwoFns[1](build),
+                      rightBranchObj.combatPositive[0](build), rightBranchObj.combatPositive[1](build), 0, 0];
+// debugging
+//var testArray = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+
 var brain;
 
 export function loop() {

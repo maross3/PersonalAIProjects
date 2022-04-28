@@ -10,14 +10,17 @@ export class binaryBrain {
 
   constructor(behaviors){
 
-    var curNode = new binaryNode(behaviors[0], behaviors[0]); // to root gen fn
+    var curNode = new binaryNode(0, behaviors[0]); // to root gen fn
     this.createRecursiveTree(behaviors, curNode , 0);
-    this.treeMap = this.populateParentTraversalMap(behaviors);
+
+    this.getRecursiveLevelOrder();
+    var flattenedArray = this.levels;
+
+    this.treeMap = this.populateParentTraversalMap(flattenedArray.flat());
   }
 
   debugVisualizeAllOrders(){
 
-    console.log(this.getRecursiveLevelOrder());
     this.depth = this.levels.length;
 
     console.log("preorder: " + this.getRecursivePreOrder(this.root));
@@ -26,7 +29,7 @@ export class binaryBrain {
   }
 
   createRecursiveTree(arr, node, i){ // build tree recursively
-      let temp = new binaryNode(arr[i],i);
+      let temp = new binaryNode(i, arr[i]);
       node = temp;
 
       if(!this.root) this.root = node;
@@ -42,9 +45,11 @@ export class binaryBrain {
 
   populateParentTraversalMap(arr){ // build behavior tree map iteratively (independent of nodes)
     var parentMap = new Map();
+
     for(let i = 0; i < (arr.length / 3) + 2; i++){
-      if(!parentMap.has(arr[i])){
-        parentMap[arr[i]] ={
+      //console.log(arr[i]);
+      if(!parentMap.has(arr[i].val)){
+        parentMap[arr[i].val] ={
           left: arr[2 * i + 1],
           right: arr[2 * i + 2]
         };
@@ -165,7 +170,7 @@ export class binaryBrain {
   recursiveInOrderHelper(root, stck){ // IN order helper
     if(!root) return;
     this.recursiveInOrderHelper(root.left, stck);
-    stck.push(root.val);
+    stck.push(root);
     this.recursiveInOrderHelper(root.right, stck);
   }
 
@@ -179,7 +184,7 @@ export class binaryBrain {
     if(!root) return;
     this.recursivePostOrderHelper(root.left, stck);
     this.recursivePostOrderHelper(root.right, stck);
-    stck.push(root.val);
+    stck.push(root);
   }
 
 

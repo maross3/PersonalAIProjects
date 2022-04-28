@@ -87,8 +87,8 @@ function extensionRushBuildRole() { // extensions not ideal
     if(!this.currentSource || !this.currentSource.x || this.creep.store.getFreeCapacity()) this.currentSource = findClosestByRange(this.creep, getObjectsByPrototype(StructureContainer));
 
     if(!this.currentSource) return FAILURE;
-
     if(!this.currentSource.x) return RUNNING;
+
     drawLineToTarget(this.creep, this.currentSource);
     withdrawFromSource(this.creep, this.currentSource);
 
@@ -123,8 +123,9 @@ export function defaultSquadRole() {
   });
 } // legacy
 
-// TODO: export tree to class, add binary search
-// fix structure.
+
+
+// TODO: refactor into binaryBrain
 var currentNode;
 export function extensionRushSquadRole() { // extensions not ideal for arena.
   if(!this.tree) this.tree = setUpBehaviorTree();

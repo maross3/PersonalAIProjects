@@ -1,23 +1,29 @@
 export class binaryBrain {
 
   // TODO:
-  // convert all root parameters to use this.root
-  // create a helper function that executes the tree in the sorted order
+  // create a function that executes the tree in the sorted order
+  // create helper function to manage order of functions
   static root;
   static levels;
   static depth;
 
   constructor(behaviors){
-    console.log(behaviors);
-    var curNode = new binaryNode(behaviors[0], behaviors[0]);
 
+    var curNode = new binaryNode(behaviors[0], behaviors[0]);
     this.createRecursiveTree(behaviors, curNode , 0);
-    this.getRecursiveLevelOrder();
-    this.depth = this.levels.length;
+
+    // visualize different sorts:
+    // console.log(this.getRecursiveLevelOrder());
+    // this.depth = this.levels.length;
+    //
+    // console.log("preorder: " + this.getRecursivePreOrder(this.root));
+    // console.log("post order: " +this.getRecursivePostOrder(this.root));
+    // console.log("in order: " + this.getRecursiveInOrder(this.root));
+
   }
 
   createRecursiveTree(arr, node, i) { // build tree
-      let temp = new binaryNode(arr[i], arr[i]);
+      let temp = new binaryNode(arr[i],i);
       node = temp;
 
       if(!this.root) this.root = node;
@@ -31,6 +37,41 @@ export class binaryBrain {
       return node;
   }
 
+  addFunctionsToTree(arr){
+    // pseudo:
+    // make node make a decision
+    // returns LEFT || RIGHT
+    // The next node will be called to do the same, or perform actions
+
+    // how do we order the nodes?
+    // what detemines the order?
+
+    // helper function?
+    // input: array of functions
+    // output: array sorted so it adheres to post order traversal?
+
+    // the desc doubles. first functions desc = 23,
+    // 2 desc == 4,5; 3 desc == 6, 7.
+    // 4 ==8; 5 == 10, 11; 6 == 12, 13; 7 == 14, 15
+
+    // make an object that takes in a main funtion, and the left and right functions
+    // binaryBrain.addFunctionsToTree(array);
+    //
+    stack = [];
+    for(let i = 0; i < arr.length / 3; i++){
+      stack.push(arr[i]);
+      stack.push(arr[2 * i + 1]);
+      stack.push(arr[arr, node.right, 2 * i + 2])
+    }
+
+    if(stack.length < arr.length){
+        var diff = arr.length - stack.length;
+        for(let j = 0; j < diff; i++){
+          stack.push[(arr.length - diff) + j];
+        }
+    }
+
+  }
 // ========================================
 //    *****iterative traversal*****
 // ========================================
@@ -116,41 +157,41 @@ export class binaryBrain {
   // ========================================
   getRecursivePreOrder(root){ // PRE order
     var stack = [];
-    recursivePreOrderHelper(root, stack);
+    this.recursivePreOrderHelper(root, stack);
     return stack;
   }
 
   recursivePreOrderHelper(root, stck){ // PRE order helper
     if(!root) return;
     stck.push(root.val);
-    recursivePreOrderHelper(root.left, stck);
-    recursivePreOrderHelper(root.right, stck);
+    this.recursivePreOrderHelper(root.left, stck);
+    this.recursivePreOrderHelper(root.right, stck);
   }
 
   getRecursiveInOrder(root){ // IN order
     var stack = [];
-    recursiveInOrderHelper(root, stack);
+    this.recursiveInOrderHelper(root, stack);
     return stack;
   }
 
   recursiveInOrderHelper(root, stck){ // IN order helper
-      if(!root) return;
-      recursiveInOrderHelper(root.left, stck);
-      stck.push(root.val);
-      recursiveInOrderHelper(root.right, stck);
+    if(!root) return;
+    this.recursiveInOrderHelper(root.left, stck);
+    stck.push(root.val);
+    this.recursiveInOrderHelper(root.right, stck);
   }
 
   getRecursivePostOrder(root){ //POST order
-    stack = [];
-    recursivePostOrderHelper(root, stack);
+    var stack = [];
+    this.recursivePostOrderHelper(root, stack);
     return stack;
   }
 
   recursivePostOrderHelper(root, stck) { //POST order helper
     if(!root) return;
-    recursivePostOrderHelper(root.left, stack);
-    recursivePostOrderHelper(root.right, stack);
-    stack.push(root.val);
+    this.recursivePostOrderHelper(root.left, stck);
+    this.recursivePostOrderHelper(root.right, stck);
+    stck.push(root.val);
   }
 
 

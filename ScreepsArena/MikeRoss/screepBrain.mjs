@@ -1,28 +1,39 @@
 export class binaryBrain {
 
   // TODO:
-  // create a function that executes the tree in the sorted order
-  // create helper function to manage order of functions
+  // execute tree in test cases to find optimal traversal routes
+  // further abstract the definition of nodes and their traversal order
+  // fn to make decision between left or right based off the parent node
+  // above fn should take in conditions to check.
+      // if true, left. false, right. null, restart traversal
+
+  // current state: pass in array of behaviors, tree generates them as Nodes
+  // pass squads into tree to make units act based on current node
   static root;
   static levels;
   static depth;
+  static treeMap;
+  static currentNode;
 
   constructor(behaviors){
 
-    var curNode = new binaryNode(behaviors[0], behaviors[0]);
+    var curNode = new binaryNode(behaviors[0], behaviors[0]); // to root gen fn
     this.createRecursiveTree(behaviors, curNode , 0);
-
+    console.log(this.populateParentTraversalMap(behaviors));
+    //this.orderedArray = this.getRecursivePostOrder(this.root);
+    //this.currentNode = this.orderedArray[0];
     // visualize different sorts:
     // console.log(this.getRecursiveLevelOrder());
     // this.depth = this.levels.length;
     //
     // console.log("preorder: " + this.getRecursivePreOrder(this.root));
-    // console.log("post order: " +this.getRecursivePostOrder(this.root));
+    console.log("post order: " + this.getRecursivePostOrder(this.root));
+    //console.log(orderedArray);
     // console.log("in order: " + this.getRecursiveInOrder(this.root));
 
   }
 
-  createRecursiveTree(arr, node, i) { // build tree
+  createRecursiveTree(arr, node, i){ // build tree
       let temp = new binaryNode(arr[i],i);
       node = temp;
 
@@ -37,30 +48,25 @@ export class binaryBrain {
       return node;
   }
 
-  // TODO: better function name that fits .ToString/.ToTree
-  // parsing helper for encoding/decoding
-  addFunctionsToTree(arr){
-    stack = [];
-    for(let i = 0; i < arr.length / 3; i++){
-      stack.push(arr[i]);
-      stack.push(arr[2 * i + 1]);
-      stack.push(arr[arr, node.right, 2 * i + 2])
+  populateParentTraversalMap(arr){
+    var parentMap = new Map();
+    for(let i = 0; i < (arr.length / 3) + 2; i++){
+      if(!parentMap.has(arr[i])){
+        parentMap[arr[i]] ={
+          left: arr[2 * i + 1],
+          right: arr[2 * i + 2]
+        };
+      }
     }
-
-    if(stack.length < arr.length){
-        var diff = arr.length - stack.length;
-        for(let j = 0; j < diff; i++){
-          stack.push[(arr.length - diff) + j];
-        }
-    }
-
+    return parentMap;
   }
 
 // ========================================
 //    *****Execution of Nodes*****
 // ========================================
-  // should units traverse tree?
-  // should tree command units?
+  execute(squad){ // Don't get lost, take a map with you :)
+    squad.forEach((unit, i) => { unit.act = this.treeMap[this.currentNode] });
+  }
 
 // ========================================
 //    *****iterative traversal*****
@@ -207,7 +213,7 @@ export class binaryBrain {
   }
 }
 
-// TODO: clean this up, create a root node class
+// TODO: refactor
 class binaryNode {
 
   static behavior;

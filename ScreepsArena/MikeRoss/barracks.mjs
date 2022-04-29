@@ -131,12 +131,12 @@ export function defaultSquadRole() {
   });
 } // legacy
 
+
 export function binaryBrainSquadRole(){
     if(this.numberOfUnits == 0) return;
     if(!this.currentNode) this.currentNode = 0;
-
     this.units.forEach((unit, i) => {
-
+      console.log(this.currentNode);
       if(this.treeMap.length < this.currentNode){
         console.log(this.currentNode + " was called but not found!");
         this.currentNode = 0;
@@ -149,14 +149,15 @@ export function binaryBrainSquadRole(){
           this.currentNode = this.treeMap[this.currentNode].left.val;
           return;
         }
-      if(this.treeMap[this.currentNode].left.behavior(unit) == FAILURE){ // script depends on quick FAILURE calls
         if(this.treeMap[this.currentNode].right.behavior(unit) == RUNNING) return;
-        if(this.treeMap[this.currentNode].right.behavior(unit) == FAILURE) this.currentNode = 0;
+        if(this.treeMap[this.currentNode].right.behavior(unit) == FAILURE) {
+          this.currentNode = 0;
+          return;
+        }
         if(this.treeMap[this.currentNode].right.behavior(unit) == SUCCESS){
           this.currentNode = this.treeMap[this.currentNode].right.val;
           return;
         }
-      }
     });
 }
 

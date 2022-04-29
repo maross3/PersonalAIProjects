@@ -21,6 +21,7 @@ var builderTree = {
   right: rightBranchObj
 }
 
+//check if he is  a base builder
 var leftBranchObj = {
   currentJob: checkJob,
   jobTypes: [checkIfBaseRole, checkIfFieldRole],
@@ -28,6 +29,7 @@ var leftBranchObj = {
   jobTwoFns: [findAndBuild, findAndFill]
 }
 
+// give task incase forgot to assign job
 var rightBranchObj = {
   currentJob: checkJob,
   jobTypes: [hasCombatParts, idle],
@@ -104,8 +106,6 @@ function idle(unit){
 }
 
 function checkIfBaseRole(unit){
-  console.log("we runnin base role boi");
-  return RUNNING;
   if(unit.jobType == BASE) return SUCCESS;
   return FAILURE;
 }
@@ -132,6 +132,8 @@ var testArray = [0, leftBranchObj.currentJob, rightBranchObj.currentJob, //left,
   "check health status", "react to enemy", // right
   "get base threat status", "react to threat", 0, 0, 0, 0]; //right
 
+
+
   //only concern with this format, is that you have to have a balanced tree.
   // I can populate the diff in the function, under the hood, but it creates
   // ambiguity. moving forward, but needs a revisit.
@@ -143,17 +145,18 @@ var testArray = [0, leftBranchObj.currentJob, rightBranchObj.currentJob, //left,
 var brain;
 
 // setting up squad to test binary decision tree
-var squadOneCreeps = [build, build];
+var squadOneCreeps = [build, build, build];
 var squadOne;
 
 
 export function loop() {
-  if(!spawner) spawner = getObjectsByPrototype(StructureSpawn)[0];
-  if(!brain) brain = new binaryBrain(testArray);
+ if(!spawner) spawner = getObjectsByPrototype(StructureSpawn)[0];
+ if(!brain) brain = new binaryBrain(testArray);
   if(!squadOne) squadOne = createSquad(binaryBrainSquad, squadOneCreeps);
-  squadOne.treeMap = brain.treeMap;
+ if(!squadOne.treeMap)squadOne.treeMap = brain.treeMap;
   spawnSquad(squadOne, spawner);
   squadOne.act();
-  console.log(brain.treeMap);
+
+  console.log(squadOne.treeMap);
   console.log(getCpuTime()); //debug
 }

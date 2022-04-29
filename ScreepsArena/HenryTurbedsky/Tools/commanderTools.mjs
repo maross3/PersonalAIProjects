@@ -46,14 +46,12 @@ export function enrollCreepsToSquadsInArray(squadArray, creepArray){
   if (squadArray.length <= 0) return activatedSquads;
 
   squadArray.forEach((squad, i)=>{
-    if(squad.currentRoles.length == 0){squad.active = false;}
-
     if(SquadTools.fillSquad(squad, creepArray)){
       squadArray.splice(i,1);
     }
 
-    if(squad.currentRoles.length > 0 && squad.active == false){
-      squad.active = true;
+    if(squad.currentRoles.length > 0 && squad.hasBeenActivated == false){
+      squad.hasBeenActivated = true;
       activatedSquads.push(squad);
     }
   });

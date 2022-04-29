@@ -17,7 +17,7 @@ export class Sheild {
   static unfilledRoles;
   static fullSquad;
 
-  static active;
+  static hasBeenActivated;
 
   static debugColor;
   static debugCode;
@@ -28,7 +28,7 @@ export class Sheild {
     this.unfilledRoles = [ Object.create(sheild), Object.create(sheild), Object.create(sheild),];
     this.fullSquad = false;
 
-    this.active = false;
+    this.hasBeenActivated = false;
 
     this.debugColor = "#ffffff";
     this.debugCode = SquadTools.debugSquad;
@@ -51,7 +51,7 @@ export class Sheild {
     else if (getRange(SquadTools.squadCenter(this), findClosestByRange(SquadTools.squadCenter(this), getObjectsByPrototype(Creep).filter(c => !c.my))) < 15)
     {
       this.currentRoles.forEach((roles, i)=>{
-        roles.act({x:25, y:25});
+        roles.act();
       });
     }
     else

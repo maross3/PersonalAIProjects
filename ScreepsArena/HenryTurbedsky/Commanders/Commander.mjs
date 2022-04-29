@@ -1,5 +1,5 @@
-import { getObjectsByPrototype, getRange, findClosestByPath } from '/game/utils';
-import { Creep, StructureSpawn, StructureContainer, Source } from '/game/prototypes';
+import { getObjectsByPrototype, getRange, findClosestByPath, findClosestByRange } from '/game/utils';
+import { Creep, StructureSpawn, StructureContainer, Source, ConstructionSite } from '/game/prototypes';
 import { RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE } from '/game/constants';
 import { searchPath } from 'game/path-finder';
 import { getTicks } from 'game';
@@ -7,12 +7,8 @@ import { } from '/arena';
 
 import * as Tools from '../Tools/tools'
 import * as RoleTools from '../Tools/roleTools'
-import * as SquadTools from '../Tools/squadTools'
-import * as CTools from '../Tools/commanderTools'
 
-import { BasicSquad } from '../Squads/BasicSquad'
-import { Sheild } from '../Squads/Sheild'
-
+import { Squad } from '../Squads/Squad'
 
 
 export class BasicCommander {
@@ -53,14 +49,12 @@ export class BasicCommander {
   run()
   {
     if(!this.spawns[0].spawner) this.spawns[0].spawner = getObjectsByPrototype(StructureSpawn).find(s => s.my);
-    var squadBasicSquad = new BasicSquad();
-    var squadSheild = new Sheild();
+    var squad = new Squad();
 
     squadSheild.setTarget({x:35, y:35});
 
     if(getTicks() == 1){
-      this.putSquadOnQueue(squadBasicSquad, this.spawns[0]);
-      this.putSquadOnQueue(squadSheild, this.spawns[0]);
+      this.putSquadOnQueue(squad, this.spawns[0]);
     }
 
     this.runCreepSpawningQueues();
@@ -85,7 +79,9 @@ export class BasicCommander {
 
 
   putSquadOnQueue(squad, spawn){
-    CTools.queueSquadToArray(squad, spawn.bodyQueue);
+    squad.unfilledRoles?.forEach((role, i) =>{
+      this.queueRoleToArray(role, bodyQueue);
+    });
     this.squadFillQueue.push(squad);
   }
 
@@ -94,5 +90,11 @@ export class BasicCommander {
       var newCreep = CTools.spawnFirstInQueue(item.spawner, item.bodyQueue);
       if(newCreep) this.creepPool.push(newCreep);
     });}
+
+
+
+
+
+
 
 }

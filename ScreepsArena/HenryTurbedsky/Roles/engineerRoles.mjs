@@ -20,6 +20,10 @@ export var worker = {
   retreat: Neutral.mineAndFill,
   move: Neutral.mineAndFill,
   debug: RoleTools.debugRole,
+  get position(){
+    if(this.creep == "none") return undefined;
+    return {x:this.creep.x, y:this.creep.y}
+  },
 };
 
 export var fastWorker = {
@@ -31,4 +35,8 @@ export var fastWorker = {
   retreat: Neutral.mineAndFill,
   move: Neutral.mineAndFill,
   debug: RoleTools.debugRole,
+  get position(){
+    if(this.creep == "none") return undefined;
+    return {x:this.creep.x, y:this.creep.y}
+  },
 };

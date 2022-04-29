@@ -15,7 +15,7 @@ export class BasicSquad {
   static unfilledRoles;
   static fullSquad;
 
-  static active;
+  static hasBeenActivated;
 
   static debugColor;
   static debugCode;
@@ -24,32 +24,26 @@ export class BasicSquad {
   constructor(){
     this.currentRoles = [];
     this.unfilledRoles = [ Object.create(worker), Object.create(worker), Object.create(worker),];
-    this.fullSquad = false;
 
-    this.active = false;
+    this.hasBeenActivated = false;
 
     this.debugColor = "#ffffff";
     this.debugCode = SquadTools.debugSquad;
     this.debug = false;
   }
 
-    act(){
-      if(this.currentRoles.length > 0){
-        this.currentRoles.forEach((roles, i)=>{
-          roles.act();
-        });
+  act(){
+    if(this.currentRoles.length > 0){
+      this.currentRoles.forEach((roles, i)=>{
+        roles.act();
+      });
 
-        if(this.debug){
-          SquadTools.squadDebugLines(this);
-          this.debugCode();
-        }
+      if(this.debug){
+        SquadTools.squadDebugLines(this);
+        this.debugCode();
       }
-
-
-
     }
-
-
-
-
   }
+
+
+}

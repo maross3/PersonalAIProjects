@@ -23,4 +23,8 @@ export var sheild = {
   move: Neutral.move,
   target: null,
   debug: RoleTools.debugRole,
+  get position(){
+    if(this.creep == "none") return undefined;
+    return {x:this.creep.x, y:this.creep.y}
+  },
 };

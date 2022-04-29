@@ -2,7 +2,7 @@ import { WORK, CARRY, MOVE, ATTACK } from '/game/constants';
 import { Creep, StructureSpawn, StructureContainer, Source } from '/game/prototypes';
 import { getObjectsByPrototype, getCpuTime } from '/game/utils';
 
-import {QUEUED, ALIVE, BASE, FIELD } from './global';
+import {QUEUED, ALIVE, BASE, FIELD, FAILURE, SUCCESS, RUNNING } from './global';
 import { minerCreep, baseSquad, generalistWorkerCreep, rampartWorkerCreep, createSquad, spawnSquad, binaryBrainSquad, binaryBrainSquadRole } from './barracks';
 import {visualizeSquad } from './debugHelper';
 import { harvestFromSource } from './neutral';
@@ -23,7 +23,7 @@ var builderTree = {
 
 var leftBranchObj = {
   hasJob: hasJob,
-  jobTypes: [BASE, FIELD],
+  jobTypes: [checkIfBaseRole, checkIfFieldRole],
   jobOneFns: [fillSpawn, buildDefenses],
   jobTwoFns: [findAndBuild, findAndFill]
 }
@@ -55,8 +55,17 @@ assignLeftBranchUnit(build);
 //      *****_dummy functions*****
 // ========================================
 function hasJob(unit){
-  return "Does " + unit.creep + " have a job?"
-  return unit.jobType;
+  console.log(unit.jobType);
+  console.log("Does " + unit.creep + " have a job?");
+
+  if(unit.jobType){
+    console.log("has a job");
+    return SUCCESS;
+  }
+  else{
+    console.log("Lazy bum fails job check");
+    return FAILURE;
+  }
 }
 
 function hasCombatParts(unit){
@@ -69,7 +78,8 @@ function patrolBase(unit){
   return unit.creep + " is patroling the base!";
 }
 function fillSpawn(unit){
-  return unit.creep + " is filling the base spawn!";
+  unit.creep + " is filling the base spawn!";
+  return RUNNING;
 }
 function buildDefenses(unit){
   return unit.creep + " is building base defenses!";
@@ -88,13 +98,26 @@ function attack(unit, target){
   return unit + " is ATTACKING " + target + "!";
 }
 function idle(unit){
-  return unit.creep + " is idle!";
+  unit.creep + " is idle!";
+  return RUNNING;
+}
+
+function checkIfBaseRole(unit){
+  console.log("we runnin base role boi");
+  return RUNNING;
+  if(unit.jobType == BASE) return SUCCESS;
+  return FAILURE;
+}
+
+function checkIfFieldRole(unit){
+  if(unit.jobType == FIELD) return SUCCESS;
+  return FAILURE;
 }
 
 // ========================================
 //   *****Debug Brain Creation*****
 // ========================================
-var testArray = [0, leftBranchObj.hasJob, idle, BASE, FIELD, rightBranchObj.hasCombatParts,
+var testArray = [0, leftBranchObj.hasJob, idle, leftBranchObj.jobTypes[0], leftBranchObj.jobTypes[1], rightBranchObj.hasCombatParts,
                   rightBranchObj.combatNegative[0], leftBranchObj.jobOneFns[0], leftBranchObj.jobOneFns[1],
                     leftBranchObj.jobTwoFns[0], leftBranchObj.jobTwoFns[1],
                       rightBranchObj.combatPositive[0], rightBranchObj.combatPositive[1], 0, 0];
@@ -104,7 +127,7 @@ var testArray = [0, leftBranchObj.hasJob, idle, BASE, FIELD, rightBranchObj.hasC
 var brain;
 
 // setting up squad to test binary decision tree
-var squadOneCreeps = [minerCreep, minerCreep];
+var squadOneCreeps = [build, build];
 var squadOne;
 
 

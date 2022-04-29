@@ -6,7 +6,7 @@ import { } from '/arena';
 import {QUEUED, ALIVE, FAILURE, RUNNING, SUCCESS } from './global';
 import {selfDefense} from './defensive';
 import { attack } from './offensive';
-import { harvestFromSource, findCenterOfUnits, withdrawFromSource, depositToSpawner} from './neutral';
+import { harvestFromSource, findCenterOfUnits, withdrawFromSource, depositToSpawner, getBodyParts } from './neutral';
 
 import { drawLineToTarget } from './debugHelper';
 
@@ -66,7 +66,7 @@ function extensionRushFillRole()  {
   return RUNNING;
 }
 
-// sources spawn every 50 ticks
+// Refactor, hard
 function extensionRushBuildRole() { // extensions not ideal
   //if(!this.sources || getTicks() % 50 == 0)
 
@@ -107,7 +107,7 @@ export var baseSquad = {
   units: [],
   queuedUnits: [],
   numberOfUnits: 0,
-  act: extensionRushSquadRole
+  act: defaultSquadRole
 };
 
 // ========================================
@@ -123,6 +123,38 @@ export function defaultSquadRole() {
   });
 } // legacy
 
+// ========================================
+//        *****SquadCreation*****
+// ========================================
+export var createSquad = (squad, units) => {
+  var resultSquad = Object.create(squad);
+  resultSquad.units = [];
+  resultSquad.queuedUnits = [];
+
+  for(let i = 0; i < units.length; i++){
+    var tempCreep = Object.create(units[i]);
+
+    tempCreep.squad = squad;
+    resultSquad.queuedUnits.push(tempCreep);
+  }
+  return resultSquad;
+}
+
+export function spawnSquad(sqd, spawner){
+
+  var creepToSpawn = sqd.queuedUnits[sqd.numberOfUnits];
+  if(!creepToSpawn) return;
+  var creepMakeUp = getBodyParts(creepToSpawn.body, creepToSpawn.ratio, 5)
+  var spawnedCreep = spawner.spawnCreep(creepMakeUp).object;
+
+  if(spawnedCreep){
+    creepToSpawn.creep = spawnedCreep;
+    creepToSpawn.status = ALIVE;
+
+    sqd.units[sqd.numberOfUnits] = sqd.queuedUnits[sqd.numberOfUnits];
+    sqd.numberOfUnits += 1;
+  }
+}
 
 
 // TODO: refactor into binaryBrain
@@ -148,7 +180,7 @@ export function extensionRushSquadRole() { // extensions not ideal for arena.
 }
 
 // ========================================
-// *****DataStructures of Mass Destruction*****
+//        *****To be deleted*****
 // ========================================
 function setUpBehaviorTree(){
   var root = Object.create(node);

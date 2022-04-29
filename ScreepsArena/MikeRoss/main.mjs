@@ -3,9 +3,9 @@ import { Creep, StructureSpawn, StructureContainer, Source } from '/game/prototy
 import { getObjectsByPrototype, getCpuTime } from '/game/utils';
 
 import {QUEUED, ALIVE, BASE, FIELD } from './global';
-import { minerCreep, baseSquad, generalistWorkerCreep, rampartWorkerCreep } from './barracks';
+import { minerCreep, baseSquad, generalistWorkerCreep, rampartWorkerCreep, createSquad, spawnSquad } from './barracks';
 import {visualizeSquad } from './debugHelper';
-import { harvestFromSource, spawnSquad } from './neutral';
+import { harvestFromSource } from './neutral';
 
 
 import { binaryBrain } from './screepBrain';
@@ -103,9 +103,18 @@ var testArray = [0, leftBranchObj.hasJob(build), idle(build), BASE, FIELD, right
 
 var brain;
 
+// setting up squad to test binary decision tree
+var squadOneCreeps = [minerCreep, minerCreep];
+var squadOne;
+
+
 export function loop() {
+  if(!squadOne) squadOne = createSquad(baseSquad, squadOneCreeps);
+  if(!spawner) spawner = getObjectsByPrototype(StructureSpawn)[0];
   if(!brain) brain = new binaryBrain(testArray);
 
+  spawnSquad(squadOne, spawner);
+  squadOne.act();
   console.log(brain.treeMap);
   console.log(getCpuTime()); //debug
 }

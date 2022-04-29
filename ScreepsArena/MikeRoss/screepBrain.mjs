@@ -47,7 +47,6 @@ export class binaryBrain {
     var parentMap = new Map();
 
     for(let i = 0; i < (arr.length / 3) + 2; i++){
-      //console.log(arr[i]);
       if(!parentMap.has(arr[i].val)){
         parentMap[arr[i].val] ={
           left: arr[2 * i + 1],

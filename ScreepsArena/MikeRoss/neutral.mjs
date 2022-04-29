@@ -60,18 +60,3 @@ export function getBodyParts(body, ratio, total){
   }
   return temp;
 }
-
-export function spawnSquad(sqd, spawner){
-
-  var creepToSpawn = sqd.queuedUnits[sqd.numberOfUnits];
-  var creepMakeUp = getBodyParts(creepToSpawn.body, creepToSpawn.ratio, 5)
-  var spawnedCreep = spawner.spawnCreep(creepMakeUp).object;
-
-  if(spawnedCreep){
-    creepToSpawn.creep = spawnedCreep;
-    creepToSpawn.status = ALIVE;
-
-    sqd.units[sqd.numberOfUnits] = sqd.queuedUnits[sqd.numberOfUnits];
-    sqd.numberOfUnits += 1;
-  }
-}

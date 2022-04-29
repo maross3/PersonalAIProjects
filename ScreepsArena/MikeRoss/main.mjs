@@ -3,7 +3,7 @@ import { Creep, StructureSpawn, StructureContainer, Source } from '/game/prototy
 import { getObjectsByPrototype, getCpuTime } from '/game/utils';
 
 import {QUEUED, ALIVE, BASE, FIELD } from './global';
-import { minerCreep, baseSquad, generalistWorkerCreep, rampartWorkerCreep, createSquad, spawnSquad } from './barracks';
+import { minerCreep, baseSquad, generalistWorkerCreep, rampartWorkerCreep, createSquad, spawnSquad, binaryBrainSquad, binaryBrainSquadRole } from './barracks';
 import {visualizeSquad } from './debugHelper';
 import { harvestFromSource } from './neutral';
 
@@ -94,10 +94,10 @@ function idle(unit){
 // ========================================
 //   *****Debug Brain Creation*****
 // ========================================
-var testArray = [0, leftBranchObj.hasJob(build), idle(build), BASE, FIELD, rightBranchObj.hasCombatParts(build),
-                  rightBranchObj.combatNegative[0](build), leftBranchObj.jobOneFns[0](build), leftBranchObj.jobOneFns[1](build),
-                    leftBranchObj.jobTwoFns[0](build), leftBranchObj.jobTwoFns[1](build),
-                      rightBranchObj.combatPositive[0](build), rightBranchObj.combatPositive[1](build), 0, 0];
+var testArray = [0, leftBranchObj.hasJob, idle, BASE, FIELD, rightBranchObj.hasCombatParts,
+                  rightBranchObj.combatNegative[0], leftBranchObj.jobOneFns[0], leftBranchObj.jobOneFns[1],
+                    leftBranchObj.jobTwoFns[0], leftBranchObj.jobTwoFns[1],
+                      rightBranchObj.combatPositive[0], rightBranchObj.combatPositive[1], 0, 0];
 // debugging
 //var testArray = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 
@@ -109,10 +109,10 @@ var squadOne;
 
 
 export function loop() {
-  if(!squadOne) squadOne = createSquad(baseSquad, squadOneCreeps);
   if(!spawner) spawner = getObjectsByPrototype(StructureSpawn)[0];
   if(!brain) brain = new binaryBrain(testArray);
-
+  if(!squadOne) squadOne = createSquad(binaryBrainSquad, squadOneCreeps);
+  squadOne.treeMap = brain.treeMap;
   spawnSquad(squadOne, spawner);
   squadOne.act();
   console.log(brain.treeMap);

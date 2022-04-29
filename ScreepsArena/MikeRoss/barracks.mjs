@@ -110,6 +110,14 @@ export var baseSquad = {
   act: defaultSquadRole
 };
 
+export var binaryBrainSquad = {
+  units: [],
+  queuedUnits: [],
+  numberOfUnits: 0,
+  treeMap: null,
+  act: binaryBrainSquadRole
+};
+
 // ========================================
 //        *****SquadRoles*****
 // ========================================
@@ -122,6 +130,15 @@ export function defaultSquadRole() {
     unit.act();
   });
 } // legacy
+
+export function binaryBrainSquadRole(){
+    if(this.numberOfUnits == 0) return;
+    this.currentNode = 0;
+    this.units.forEach((unit, i) => {
+      if(this.treeMap[this.currentNode].left.behavior(unit) == FAILURE);
+        console.log(this.treeMap[this.currentNode].right.behavior(unit));
+    });
+}
 
 // ========================================
 //        *****SquadCreation*****

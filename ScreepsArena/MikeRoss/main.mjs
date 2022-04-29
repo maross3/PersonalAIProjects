@@ -22,16 +22,17 @@ var builderTree = {
 }
 
 var leftBranchObj = {
-  hasJob: hasJob,
+  currentJob: checkJob,
   jobTypes: [checkIfBaseRole, checkIfFieldRole],
   jobOneFns: [fillSpawn, buildDefenses],
   jobTwoFns: [findAndBuild, findAndFill]
 }
 
 var rightBranchObj = {
-  hasCombatParts: hasCombatParts,
-  combatPositive: [attack, patrolBase],
-  combatNegative: [patrolBase]
+  currentJob: checkJob,
+  jobTypes: [hasCombatParts, idle],
+  jobOneFns: [attack, patrolBase],
+  jobTwoFns: [patrolBase, findAndFill]
 }
 
 var build = {
@@ -54,7 +55,7 @@ assignLeftBranchUnit(build);
 // ========================================
 //      *****_dummy functions*****
 // ========================================
-function hasJob(unit){
+function checkJob(unit){
   console.log(unit.jobType);
   console.log("Does " + unit.creep + " have a job?");
 
@@ -117,10 +118,25 @@ function checkIfFieldRole(unit){
 // ========================================
 //   *****Debug Brain Creation*****
 // ========================================
-var testArray = [0, leftBranchObj.hasJob, idle, leftBranchObj.jobTypes[0], leftBranchObj.jobTypes[1], rightBranchObj.hasCombatParts,
-                  rightBranchObj.combatNegative[0], leftBranchObj.jobOneFns[0], leftBranchObj.jobOneFns[1],
-                    leftBranchObj.jobTwoFns[0], leftBranchObj.jobTwoFns[1],
-                      rightBranchObj.combatPositive[0], rightBranchObj.combatPositive[1], 0, 0];
+var testArray = [0, leftBranchObj.currentJob, rightBranchObj.currentJob, //left, right
+  leftBranchObj.jobTypes[0], leftBranchObj.jobTypes[1],// left
+  rightBranchObj.jobTypes[0], rightBranchObj.jobTypes[1],//right
+  leftBranchObj.jobOneFns[0], leftBranchObj.jobOneFns[1],//left
+  leftBranchObj.jobTwoFns[0], leftBranchObj.jobTwoFns[1],//left
+  rightBranchObj.jobOneFns[0], rightBranchObj.jobOneFns[1],//right
+  rightBranchObj.jobTwoFns[0], rightBranchObj.jobTwoFns[1],//right
+  "check resources and act", "switch job to extension", // left
+  "get enemy threat and act", "build ramparts", // left
+  "find const site/find sources", "build extension/harvest",//left
+  "find random source with low threat", "harvest and fill extension",//left
+  "check health status", "react to enemy", // right
+  "get base threat status", "react to threat", 0, 0, 0, 0]; //right
+
+  //only concern with this format, is that you have to have a balanced tree.
+  // I can populate the diff in the function, under the hood, but it creates
+  // ambiguity. moving forward, but needs a revisit.
+
+
 // debugging
 //var testArray = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 

@@ -61,12 +61,12 @@ export class BasicSquad {
     return findClosestByPath(this.center, creepArray);
   }
 
-  // arrayOfCreepIndexes is optional
-  indexOfClosestCreepToSquad(creepArray, indexes = "unsupplied")
+  // indexes is optional
+  indexOfClosestCreepToSquad(creepArray, indexes)
   {
     var lowestCost = 1111, closestCreep = -1;
     // Run just the indexes that are in "indexes" to fillter out creeps
-    if(typeof indexes !== "unsupplied") {
+    if(indexes !== undefined) {
       indexes.forEach((creepIndex) =>{
         var cost = searchPath(this.center, creepArray[creepIndex]).cost;
         if (lowestCost > cost){
@@ -105,6 +105,7 @@ export class BasicSquad {
     return this.isFull;
   }
 
+  //// TODO: If just one creep put circkle aroud it.
   squadDebugLines(){
     if(!this.debugColor) this.debugColor = Tools.randomHex();
     var center = this.center;

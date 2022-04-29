@@ -18,7 +18,7 @@ export class BasicCommander {
 
   static squadFillQueue;
 
-  static spawns;
+  static spawnLocations;
 
   static infoScores = {};
 
@@ -31,7 +31,7 @@ export class BasicCommander {
 
     this.squadFillQueue = [];
 
-    this.spawns = [{ spawner: null, bodyQueue: [] }];
+    this.spawnLocations = [{ spawner: null, bodyQueue: [] }];
 
     this.infoScores = {
       heatmap: null,
@@ -48,18 +48,18 @@ export class BasicCommander {
 
   run()
   {
-    if(!this.spawns[0].spawner) this.spawns[0].spawner = getObjectsByPrototype(StructureSpawn).find(s => s.my);
+    if(!this.spawnLocations[0].spawner) this.spawnLocations[0].spawner = getObjectsByPrototype(StructureSpawn).find(s => s.my);
     var squad = new Squad();
 
     squadSheild.setTarget({x:35, y:35});
 
     if(getTicks() == 1){
-      this.putSquadOnQueue(squad, this.spawns[0]);
+      this.requestCreepsForSquad(squad, this.spawnLocations[0]);
     }
 
     this.runCreepSpawningQueues();
 
-    this.squadList = this.squadList.concat(CTools.enrollCreepsToSquadsInArray(this.squadFillQueue, this.creepPool));
+    this.squadList = this.squadList.concat(this.enrollCreepsToSquadsInFillQueue());
 
 
     if(this.squadList.length > 0){
@@ -76,24 +76,52 @@ export class BasicCommander {
 
 
 
+  runCreepSpawningQueues(){
+    this.spawnLocations.forEach((spawn, i) => {
+    var newCreep = this.runSpawner(spawn);
+    if(newCreep) this.creepPool.push(newCreep);
+  });}
 
-
-  putSquadOnQueue(squad, spawn){
-    squad.unfilledRoles?.forEach((role, i) =>{
-      this.queueRoleToArray(role, bodyQueue);
+  requestCreepsForSquad(squad, spawn){
+    squad.unfilledRoles.forEach((role, i) =>{
+      this.queueRoleToArray(role, spawn);
     });
     this.squadFillQueue.push(squad);
   }
+  queueRoleToArray(role, spawn){
+    this.queueBodyToArray(role.bodyMakeUp, spawn);
+  }
+  queueBodyToArray(body, spawn){
+    if(spawn !== undefined) spawn = this.spawnLocations[0];
+    spawn.bodyQueue.push(body);
+  }
 
-  runCreepSpawningQueues(){
-      this.spawns.forEach((item, i) => {
-      var newCreep = CTools.spawnFirstInQueue(item.spawner, item.bodyQueue);
-      if(newCreep) this.creepPool.push(newCreep);
-    });}
+  runSpawner(location)
+  {
+    if(location.bodyQueue.length == 0) return false;
+    var newCreep = location.spawner.spawnCreep(location.bodyQueue[0]).object;
+    if(newCreep) location.bodyQueue.shift();
+    return newCreep;
+  }
 
+  // Removes full squads from squadArray and returns an array newly actived squads.
+  enrollCreepsToSquadsInFillQueue(){
+    if (this.squadFillQueue.length <= 0) return false;
 
+    this.squadFillQueue.forEach((squad, i)=>{
+      if(squad.fillSquad(this.creepPool)){
+        this.squadFillQueue.splice(i,1);
+      }
+      if(squad.currentRoles.length > 0 && squad.hasBeenActivated == false){
+        squad.hasBeenActivated = true;
+        this.squadList.push(squad);
+      }
+    });
 
-
+    return activatedSquads;
+  }
+//// TODO: check if squad class works. But first need a commander that doesnt use squad Tools.
+//// enrollCreepsToSquadsInFillQueue can still be better.
 
 
 

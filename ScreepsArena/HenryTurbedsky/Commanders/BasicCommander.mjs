@@ -53,12 +53,16 @@ export class BasicCommander {
   run()
   {
     if(!this.spawns[0].spawner) this.spawns[0].spawner = getObjectsByPrototype(StructureSpawn).find(s => s.my);
-    var squadBasicSquad = new BasicSquad();
-    var squadSheild = new Sheild();
 
-    squadSheild.setTarget({x:35, y:35});
+    if(getTicks() < 4 ){
+      var squadBasicSquad = new BasicSquad();
+      var squadSheild = new Sheild();
 
-    if(getTicks() == 1){
+      squadBasicSquad.debug = true;
+      squadSheild.debug = true;
+
+      squadSheild.setTarget({x:25, y:25});
+
       this.putSquadOnQueue(squadBasicSquad, this.spawns[0]);
       this.putSquadOnQueue(squadSheild, this.spawns[0]);
     }

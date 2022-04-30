@@ -1,8 +1,8 @@
-import { getObjectsByPrototype, createConstructionSite, getCpuTime } from '/game/utils';
+import { getObjectsByPrototype, createConstructionSite, getCpuTime, findClosestByRange } from '/game/utils';
 import { Creep, StructureSpawn, StructureContainer, Source, ConstructionSite } from '/game/prototypes';
-import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK } from '/game/constants';
+import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE, ERR_INVALID_TARGET, WORK, CARRY, MOVE, ATTACK } from '/game/constants';
 import { } from '/arena';
-import {QUEUED, ALIVE } from './global'
+import {QUEUED, ALIVE, RUNNING, SUCCESS, FAILURE } from './global'
 
 var constSite;
 
@@ -26,14 +26,39 @@ export function depositToSpawner(creep, spawner){
 }
 
 export function harvestFromSource(creep, source){
-  if(!creep.store.getFreeCapacity(RESOURCE_ENERGY)) return;
+  if(!creep.getFreeCapacity(RESOURCE_ENERGY)) return;
   if(creep.harvest(source) == ERR_NOT_IN_RANGE) creep.moveTo(source);
-  //return 1;
+
 }
 
 export function withdrawFromSource(creep, source){
-  if(!creep.store.getFreeCapacity(RESOURCE_ENERGY)) return;
-  if(creep.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.moveTo(source);
+  if(!creep.store.getFreeCapacity(RESOURCE_ENERGY)) return RUNNING;
+  // check why this breaks with return here
+
+  if(typeof source == "undefined") source = findClosestByRange(creep, getObjectsByPrototype(StructureContainer));
+  else if(creep.withdraw(source, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.moveTo(source, {reusePath: 50})
+  else console.log("Mine!")
+
+}
+
+export function fillSpawn(){
+    if(!this.spawner) this.spawner = getObjectsByPrototype(StructureSpawn)[0];
+    if(!this.energySource) this.energySource = getObjectsByPrototype(StructureContainer)[0];
+
+
+    if(this.creep.store.getFreeCapacity(RESOURCE_ENERGY)) withdrawFromSource(this.creep, this.energySource); // makesure this.creep is calling on individual creeps
+    else if(this.creep.transfer(this.spawner, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) this.creep.moveTo(this.spawner);
+    return RUNNING;
+}
+
+export function waitForTicks(unit, ticks){
+  if(!this.unitTicks) unitTicks = 0;
+
+  if(unitTicks == ticks){
+    unitTicks = 0;
+    return true;
+  }
+  return false;
 }
 
 // ========================================
@@ -50,13 +75,4 @@ export function findCenterOfUnits(units){
   tempX = tempX/units.length;
   tempY = tempY/units.length;
   return {x:tempX, y:tempY};
-}
-
-export function getBodyParts(body, ratio, total){
-  var temp = [];
-  for(let i = 0; i < body.length; i++){
-    for(let j =0; j < ratio[i] * total; j++)
-      temp.push(body[i]);
-  }
-  return temp;
 }

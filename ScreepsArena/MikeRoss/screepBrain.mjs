@@ -7,7 +7,8 @@ export class binaryBrain {
   static levels;
 
 
-
+  // for behaviors, pass in an array following nodes from left to right
+  // (ordered by level, root = smallest) data generator coming soon :D
   constructor(behaviors){
 
     var curNode = new binaryNode(0, behaviors[0]); // to root gen fn

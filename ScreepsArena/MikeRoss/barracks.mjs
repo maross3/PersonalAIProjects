@@ -1,12 +1,12 @@
 import { getObjectsByPrototype, getTicks, findInRange, createConstructionSite, findClosestByPath, findClosestByRange } from '/game/utils';
 import { Creep, StructureSpawn, StructureContainer, Source, StructureExtension, ConstructionSite } from '/game/prototypes';
-import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK, ERR_NOT_ENOUGH_RESOURCES, ERR_INVALID_TARGET } from '/game/constants';
+import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK, ERR_NOT_ENOUGH_RESOURCES, ERR_INVALID_TARGET, HEAL, TOUGH, RANGED_ATTACK } from '/game/constants';
 import { } from '/arena';
 
-import {QUEUED, ALIVE, FAILURE, RUNNING, SUCCESS } from './global';
-import {selfDefense} from './defensive';
+import {QUEUED, ALIVE, FAILURE, RUNNING, SUCCESS, FULL } from './global';
+import {selfDefense, patrolBase} from './defensive';
 import { attack } from './offensive';
-import { harvestFromSource, findCenterOfUnits, withdrawFromSource, depositToSpawner, getBodyParts } from './neutral';
+import { harvestFromSource, findCenterOfUnits, withdrawFromSource, depositToSpawner, fillSpawn} from './neutral';
 
 import { drawLineToTarget } from './debugHelper';
 
@@ -40,6 +40,50 @@ export var rampartWorkerCreep = { // W,C,M
   act: extensionRushFillRole
 }
 
+export var privateMover = {
+  creep: "none",
+  body: [WORK, CARRY, MOVE],
+  ratio: [0.33, 0.33, 0.33],
+  weight: 5,
+  squad: "none",
+  status: QUEUED,
+  behaviors: [],
+  brain: fillSpawn
+}
+
+export var privateHealer = {
+  creep: "none",
+  body: [HEAL, MOVE, TOUGH],
+  ratio: [0.25, 0.5, 0.25],
+  weight: 4,
+  squad: "none",
+  status: QUEUED,
+  behaviors: [],
+  brain: patrolBase
+}
+
+export var privateOffense = {
+  creep: "none",
+  body: [ATTACK, MOVE, TOUGH],
+  ratio: [0.5, 0.25, 0.25],
+  weight: 5,
+  squad: "none",
+  status: QUEUED,
+  behaviors: [],
+  brain: patrolBase
+}
+
+export var privateRanger = {
+  creep: "none",
+  body: [RANGED_ATTACK, MOVE],
+  ratio: [0.5, 0.5],
+  weight: 4,
+  squad: "none",
+  status: QUEUED,
+  behaviors: [],
+  brain: patrolBase
+}
+
 // ========================================
 //        *****CreepRoles*****
 // ========================================
@@ -67,7 +111,7 @@ function extensionRushFillRole()  {
 }
 
 // Refactor, hard
-function extensionRushBuildRole() { // extensions not ideal
+function extensionRushBuildRole() { // nogood
   //if(!this.sources || getTicks() % 50 == 0)
 
   if(!this.constSite) {
@@ -100,6 +144,49 @@ function extensionRushBuildRole() { // extensions not ideal
   return RUNNING;
 }
 
+function privateMoverBrain(){
+  if(!this.breakingBillboard) this.breakingBillboard = false;
+
+  if(!this.breakingBillboard)
+    primitiveBinaryBrainModule(this);
+
+}
+
+
+// ========================================
+//       *****BrainModules*****
+// ========================================
+function primitiveBinaryBrainModule(unit){
+  if(!this.binaryNeuron) this.binaryNeuron = unit.brain;
+  if(!this.actionPotential) this.actionPotential = 0;
+
+    if(!this.binaryNeuron[this.actionPotential]){
+      console.log(this.actionPotential + " did not reach synapse!");
+      this.actionPotential = 0;
+      return;
+    }
+
+    if(this.binaryNeuron[this.actionPotential].left.behavior(unit) == RUNNING)
+      return;
+    else if(this.binaryNeuron[this.actionPotential].left.behavior(unit) == SUCCESS){
+        this.actionPotential = this.binaryNeuron[this.actionPotential].left.val;
+        return;
+      }
+      if(this.binaryNeuron[this.actionPotential].right.behavior(unit) == RUNNING) return;
+      if(this.binaryNeuron[this.actionPotential].right.behavior(unit) == FAILURE) {
+        this.actionPotential = 0;
+        return;
+      }
+      if(this.binaryNeuron[this.actionPotential].right.behavior(unit) == SUCCESS){
+        this.actionPotential = this.binaryNeuron[this.actionPotential].right.val;
+        return;
+      }
+}
+
+function shortOfSquadBillboard(){
+   // add run away logic and release cond.
+}
+
 // ========================================
 //          *****Squads*****
 // ========================================
@@ -117,6 +204,22 @@ export var binaryBrainSquad = {
   treeMap: null,
   act: binaryBrainSquadRole
 };
+
+export var primitiveBrainSquad = {
+  units: [],
+  queuedUnits: [],
+  numberOfUnits: 0,
+  status: QUEUED,
+  act: genericBrainDictator
+}
+
+export var primitiveThreePointSquad = {
+  units: [],
+  queuedUnits: [],
+  numberOfUnits: 0,
+  status: QUEUED,
+  act: genericBrainDictator
+}
 
 // ========================================
 //        *****SquadRoles*****
@@ -161,6 +264,13 @@ export function binaryBrainSquadRole(){
     });
 }
 
+export function genericBrainDictator(){
+  this.units.forEach((unit, i) => {
+    if(unit.breakingBillboard) console.log("breaking billboard!")
+    unit.brain();
+  });
+}
+
 // ========================================
 //        *****SquadCreation*****
 // ========================================
@@ -181,8 +291,12 @@ export var createSquad = (squad, units) => {
 export function spawnSquad(sqd, spawner){
 
   var creepToSpawn = sqd.queuedUnits[sqd.numberOfUnits];
-  if(!creepToSpawn) return;
-  var creepMakeUp = getBodyParts(creepToSpawn.body, creepToSpawn.ratio, 5)
+
+  if(!creepToSpawn){
+    sqd.status = FULL;
+    return false;
+  }
+  var creepMakeUp = getBodyParts(creepToSpawn.body, creepToSpawn.ratio, creepToSpawn.weight)
   var spawnedCreep = spawner.spawnCreep(creepMakeUp).object;
 
   if(spawnedCreep){
@@ -191,52 +305,15 @@ export function spawnSquad(sqd, spawner){
 
     sqd.units[sqd.numberOfUnits] = sqd.queuedUnits[sqd.numberOfUnits];
     sqd.numberOfUnits += 1;
+    return spawnedCreep;
   }
 }
 
-
-// TODO: refactor into binaryBrain
-var currentNode;
-export function extensionRushSquadRole() { // extensions not ideal for arena.
-  if(!this.tree) this.tree = setUpBehaviorTree();
-  if(this.numberOfUnits == 0) return;
-
-  if(!currentNode) currentNode = this.tree.left;
-  var closestThreat = selfDefense(findCenterOfUnits(this.units));
-  this.units.forEach((unit, i) => {
-
-    if(currentNode.status == RUNNING) currentNode = currentNode;
-    else if(currentNode.status == SUCCESS) currentNode = currentNode.right;
-    else if(currentNode.status == FAILURE) currentNode = this.tree.left;
-    else currentNode = this.tree.left;
-
-    if(!currentNode.behavior) currentNode = this.tree.right;
-
-    unit.act = currentNode.behavior;
-    currentNode.status = unit.act();
-  });
-}
-
-// ========================================
-//        *****To be deleted*****
-// ========================================
-function setUpBehaviorTree(){
-  var root = Object.create(node);
-  var left = Object.create(node);
-  var right = Object.create(node);
-
-  root.left = left;
-  root.right = right;
-
-  root.left.behavior = extensionRushFillRole;
-  root.left.status = RUNNING;
-  root.right.behavior = extensionRushBuildRole;
-  return root;
-}
-
-var node = {
-  left: 0,
-  right: 0,
-  status: FAILURE,
-  behavior: 0
+function getBodyParts(body, ratio, total){
+  var temp = [];
+  for(let i = 0; i < body.length; i++){
+    for(let j =0; j < ratio[i] * total; j++)
+      temp.push(body[i]);
+  }
+  return temp;
 }

@@ -2,7 +2,7 @@ import { getObjectsByPrototype, createConstructionSite, getCpuTime, findClosestB
 import { Creep, StructureSpawn, StructureContainer, Source, ConstructionSite } from '/game/prototypes';
 import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE, ERR_INVALID_TARGET, WORK, CARRY, MOVE, ATTACK } from '/game/constants';
 import { } from '/arena';
-import {QUEUED, ALIVE, RUNNING, SUCCESS, FAILURE } from './global'
+import {QUEUED, ALIVE, RUNNING, SUCCESS, FAILURE, COMBAT } from './global'
 
 var constSite;
 

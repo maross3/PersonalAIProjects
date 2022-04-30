@@ -1,24 +1,38 @@
 import { Creep } from '/game/prototypes';
 import { getObjectsByPrototype, getRange, findClosestByPath } from '/game/utils';
 import {TOP, BOTTOM} from '/game/constants'
-import {RUNNING, FAILURE, SUCCESS} from './global';
-// refreshrate = x
-// if range < threshold1, x = 10. if getTicks % x == 0, selfDefense(this.creep)
-// update global enemy array, called on squad center
+import {RUNNING, FAILURE, SUCCESS, COMBAT} from './global';
+import { calculateAngle, shortDistanceDirection, calculateDistance } from './mathUtils'
+
 export function selfDefense(self){
     var enemies = getObjectsByPrototype(Creep).filter(c => !c.my)
-    var closestEnemy = findClosestByPath(self, enemies);
-    if(closestEnemy && getRange(closestEnemy, self) <= 10) return closestEnemy;
+    var closestEnemy = findClosestByRange(self, enemies);
+    if(closestEnemy && getRange(closestEnemy, self) <= 10) {
+      this.creep.status = COMBAT;
+      return closestEnemy;
+    }
     return false;
 }
 
-// only current exit is billboard
+// TODO
 export function patrolBase(unit){
-  if(!this.patrolTime) this.patrolTime = 0;
 
-  if(this.patrolTime < 5) this.creep.move(TOP);
-  else if(this.patrolTime < 11)this.creep.move(BOTTOM);
-  else this.patrolTime = 0;
 
   return RUNNING;
+}
+
+// very basic path finding to cut resources
+export function followTarget(){
+
+  if(!this.creep) return;
+  var distance = calculateDistance(this.creep, this.targetToFollow);
+  if(distance < 2) return;
+
+  var angle = calculateAngle(this.creep, this.targetToFollow);
+
+  if(distance >= 2 && distance <= 10){
+    this.creep.move(shortDistanceDirection(angle));
+  } else{
+    this.creep.moveTo(this.targetToFollow)
+  }
 }

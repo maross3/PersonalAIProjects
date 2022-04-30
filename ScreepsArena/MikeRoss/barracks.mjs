@@ -4,8 +4,8 @@ import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK, ERR_NOT_EN
 import { } from '/arena';
 
 import {QUEUED, ALIVE, FAILURE, RUNNING, SUCCESS, FULL } from './global';
-import {selfDefense, patrolBase} from './defensive';
-import { attack } from './offensive';
+import {selfDefense, patrolBase, followTarget} from './defensive';
+import { attack, genericSupport, genericRangedAttack, attackEnemyBase } from './offensive';
 import { harvestFromSource, findCenterOfUnits, withdrawFromSource, depositToSpawner, fillSpawn} from './neutral';
 
 import { drawLineToTarget } from './debugHelper';
@@ -59,7 +59,9 @@ export var privateHealer = {
   squad: "none",
   status: QUEUED,
   behaviors: [],
-  brain: patrolBase
+  brain: followTarget,
+  targetToFollow: "none",
+  handleCombat: genericSupport
 }
 
 export var privateOffense = {
@@ -70,7 +72,9 @@ export var privateOffense = {
   squad: "none",
   status: QUEUED,
   behaviors: [],
-  brain: patrolBase
+  target: "none",
+  brain: attackEnemyBase,
+  handleCombat: attackEnemyBase
 }
 
 export var privateRanger = {
@@ -81,7 +85,9 @@ export var privateRanger = {
   squad: "none",
   status: QUEUED,
   behaviors: [],
-  brain: patrolBase
+  brain: followTarget,
+  targetToFollow: "none",
+  handleCombat: genericRangedAttack
 }
 
 // ========================================
@@ -305,7 +311,8 @@ export function spawnSquad(sqd, spawner){
 
     sqd.units[sqd.numberOfUnits] = sqd.queuedUnits[sqd.numberOfUnits];
     sqd.numberOfUnits += 1;
-    return spawnedCreep;
+    creepToSpawn.squad = sqd;
+    return creepToSpawn;
   }
 }
 

@@ -2,9 +2,9 @@ import { } from 'game/utils'
 import { } from 'game/prototypes'
 import { WORK, CARRY, MOVE, ATTACK, HEAL, TOUGH, RANGED_ATTACK } from 'game/constants'
 import { QUEUED, FULL, ALIVE, SUCCESS, FAILURE, RUNNING } from './global'
-import { followTarget, guardBase } from './defensive'
+import { followTarget, guardBaseChokePoints } from './defensive'
 import { genericSupport, genericRangedAttack, attackEnemyBase } from './offensive'
-import { fillSpawn } from './neutral'
+import { fillSpawn, setUpThreePointSquad } from './neutral'
 // ========================================
 //          *****Creeps*****
 // ========================================
@@ -67,7 +67,7 @@ export var primitiveDefender = {
   squad: 'none',
   status: QUEUED,
   behaviors: [],
-  brain: guardBase
+  brain: guardBaseChokePoints
 }
 /* TODO
 function privateMoverBrain(){
@@ -106,7 +106,8 @@ export var primitiveThreePointSquad = {
   queuedUnits: [],
   numberOfUnits: 0,
   status: QUEUED,
-  act: genericBrainDictator
+  act: genericBrainDictator,
+  setup: setUpThreePointSquad
 }
 
 export var defenderSquad = {
@@ -172,22 +173,24 @@ export var createSquad = (squad, units) => {
 }
 
 export function spawnSquad (sqd, spawner) {
-  var creepToSpawn = sqd.queuedUnits[sqd.numberOfUnits]
+  var creepToSpawn = sqd.queuedUnits[0]
   if (!creepToSpawn) {
     sqd.status = FULL
     return false
   }
+
   var creepMakeUp = getBodyParts(creepToSpawn.body, creepToSpawn.ratio, creepToSpawn.weight)
   var spawnedCreep = spawner.spawnCreep(creepMakeUp).object
 
   if (spawnedCreep) {
-    creepToSpawn.bodyCount = creepMakeUp.length
-    creepToSpawn.creep = spawnedCreep
-    creepToSpawn.status = ALIVE
+    sqd.units[sqd.numberOfUnits] = sqd.queuedUnits.shift()
 
-    sqd.units[sqd.numberOfUnits] = sqd.queuedUnits[sqd.numberOfUnits]
+    sqd.units[sqd.numberOfUnits].squad = sqd
+    sqd.units[sqd.numberOfUnits].creep = spawnedCreep
+    sqd.units[sqd.numberOfUnits].bodyCount = creepMakeUp.length
+    sqd.units[sqd.numberOfUnits].status = ALIVE
+
     sqd.numberOfUnits += 1
-    creepToSpawn.squad = sqd
     return creepToSpawn
   }
 }

@@ -72,3 +72,8 @@ export function findCenterOfUnits (units) {
   tempY = tempY / units.length
   return { x: tempX, y: tempY }
 }
+
+export function setUpThreePointSquad () {
+  this.queuedUnits[1].targetToFollow = this.queuedUnits[0]
+  this.queuedUnits[2].targetToFollow = this.queuedUnits[1]
+}

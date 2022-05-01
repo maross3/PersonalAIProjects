@@ -27,7 +27,7 @@ export function followTarget () {
   if (!this.creep) return
   var distance = calculateDistance(this.creep, this.targetToFollow)
   if (distance < 2) return
-
+  console.log(this.targetToFollow)
   var angle = calculateAngle(this.creep, this.targetToFollow)
 
   if (distance >= 2 && distance <= 10) {
@@ -37,7 +37,7 @@ export function followTarget () {
   }
 }
 
-export function guardBase () {
+export function guardBaseChokePoints () {
   if (!this.creep) return
 
   if (!this.top) {

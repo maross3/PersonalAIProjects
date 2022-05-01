@@ -5,9 +5,11 @@ import { getObjectsByPrototype, getCpuTime } from 'game/utils'
 import { FULL } from './global'
 import {
   primitiveBrainSquad, primitiveThreePointSquad, privateMover, privateHealer,
-  privateOffense, privateRanger, createSquad, spawnSquad, primitiveDefender,
+  privateOffense, privateRanger, primitiveDefender,
   defenderSquad
 } from './barracks'
+
+import { createSquad, spawnSquad } from './creepFactory'
 import { } from './debugHelper'
 import { } from './neutral'
 import { } from './screepBrain'

@@ -1,7 +1,7 @@
 import { } from 'game/utils'
 import { } from 'game/prototypes'
 import { WORK, CARRY, MOVE, ATTACK, HEAL, TOUGH, RANGED_ATTACK } from 'game/constants'
-import { QUEUED, FULL, ALIVE, SUCCESS, FAILURE, RUNNING } from './global'
+import { QUEUED, SUCCESS, FAILURE, RUNNING } from './global'
 import { guardBaseChokePoints } from './defensive'
 import { genericSupport, genericRangedAttack, attackEnemyBase } from './offensive'
 import { fillSpawn, setUpFollower, initializeThreePointSquad } from './neutral'
@@ -153,54 +153,4 @@ export function genericBrainDictator () {
     if (unit.breakingBillboard) console.log('breaking billboard!')
     unit.brain()
   })
-}
-
-// ========================================
-//        *****SquadCreation*****
-// ========================================
-export var createSquad = (squad, units) => {
-  var resultSquad = Object.create(squad)
-  resultSquad.units = []
-  resultSquad.queuedUnits = []
-
-  for (let i = 0; i < units.length; i++) {
-    var tempCreep = Object.create(units[i])
-
-    tempCreep.squad = squad
-    resultSquad.queuedUnits.push(tempCreep)
-  }
-  return resultSquad
-}
-
-export function spawnSquad (sqd, spawner) {
-  var creepToSpawn = sqd.queuedUnits[0]
-  if (!creepToSpawn) {
-    sqd.status = FULL
-    return false
-  }
-
-  var creepMakeUp = getBodyParts(creepToSpawn.body, creepToSpawn.ratio, creepToSpawn.weight)
-  var spawnedCreep = spawner.spawnCreep(creepMakeUp).object
-
-  if (spawnedCreep) {
-    sqd.units[sqd.numberOfUnits] = sqd.queuedUnits.shift()
-
-    sqd.units[sqd.numberOfUnits].squad = sqd
-    sqd.units[sqd.numberOfUnits].creep = spawnedCreep
-    sqd.units[sqd.numberOfUnits].bodyCount = creepMakeUp.length
-    sqd.units[sqd.numberOfUnits].status = ALIVE
-
-    sqd.numberOfUnits += 1
-    return creepToSpawn
-  }
-}
-
-function getBodyParts (body, ratio, total) {
-  var temp = []
-  for (let i = 0; i < body.length; i++) {
-    for (let j = 0; j < ratio[i] * total; j++) {
-      temp.push(body[i])
-    }
-  }
-  return temp
 }

@@ -16,23 +16,20 @@ import { } from './defensive'
 
 // just about ready for my first arena :)
 
-// needs base defenders
-// refactor this spawning method, it is good!
+// next up, create a squad/unit standard for factory
+var squadsToSpawn = []
 var movers = createSquad(primitiveBrainSquad, [privateMover, privateMover])
+squadsToSpawn.push(movers)
 var defenders = createSquad(defenderSquad, [primitiveDefender, primitiveDefender])
+squadsToSpawn.push(defenders)
 var secondLineDefenders = createSquad(defenderSquad, [primitiveDefender, primitiveDefender])
-
-// var spawnGuardians = createSquad(spawnGuardianSquad, [primitiveSpawnGuard, primitiveSpawnGuard, primitiveSpawnGuard, primitiveSpawnGuard]
-// var bomberSquad = createSquad(bomberSquad, [bomber, bomber, bomber, bomber, bomber, bomber])
-
+squadsToSpawn.push(secondLineDefenders)
 var privateThreePointSquad = createSquad(primitiveThreePointSquad, [privateOffense, privateRanger, privateHealer])
-privateThreePointSquad.setup()
-
+squadsToSpawn.push(privateThreePointSquad)
 var secondThreePointSquad = createSquad(primitiveThreePointSquad, [privateOffense, privateRanger, privateHealer])
-secondThreePointSquad.setup()
-
+squadsToSpawn.push(secondThreePointSquad)
 var thirdThreePointSquad = createSquad(primitiveThreePointSquad, [privateOffense, privateRanger, privateHealer])
-thirdThreePointSquad.setup()
+squadsToSpawn.push(thirdThreePointSquad)
 
 var spawner
 var spawnTimer = 3
@@ -42,25 +39,14 @@ export function loop () {
 
   if (!spawner) spawner = getObjectsByPrototype(StructureSpawn)[0]
 
-  if (spawnTimer > spawnDelay) {
-    var spawnedCreep
+  if (spawnTimer > spawnDelay && squadsToSpawn.length > 0) {
+    var spawnedCreep = spawnSquad(squadsToSpawn[0], spawner)
 
-    if (movers.status !== FULL) { // squad to spawn variable
-      spawnedCreep = spawnSquad(movers, spawner)
-    } else if (defenders.status !== FULL) {
-      spawnedCreep = spawnSquad(defenders, spawner)
-    } else if (secondLineDefenders.status !== FULL) {
-      spawnedCreep = spawnSquad(secondLineDefenders, spawner)
-    } else if (privateThreePointSquad.status !== FULL) {
-      spawnedCreep = spawnSquad(privateThreePointSquad, spawner)
-      if (spawnedCreep) spawnedCreep.targetToFollow = spawnedCreep.targetToFollow.creep
-    } else if (secondThreePointSquad.status !== FULL) {
-      spawnedCreep = spawnSquad(secondThreePointSquad, spawner)
-      if (spawnedCreep) spawnedCreep.targetToFollow = spawnedCreep.targetToFollow.creep
-    } else if (thirdThreePointSquad.status !== FULL) {
-      spawnedCreep = spawnSquad(thirdThreePointSquad, spawner)
-      if (spawnedCreep) spawnedCreep.targetToFollow = spawnedCreep.targetToFollow.creep
+    if (squadsToSpawn[0].status === FULL) {
+      squadsToSpawn.shift()
+      squadsToSpawn[0].setup()
     }
+
     if (spawnedCreep) spawnDelay = spawnedCreep.bodyCount
   }
 

@@ -2,7 +2,7 @@ import { getObjectsByPrototype, createConstructionSite, findClosestByRange } fro
 import { StructureSpawn, StructureContainer, ConstructionSite } from 'game/prototypes'
 import { RESOURCE_ENERGY, ERR_NOT_IN_RANGE } from 'game/constants'
 import { RUNNING } from './global'
-
+import { followTarget } from './defensive'
 var constSite
 
 // ========================================
@@ -73,7 +73,14 @@ export function findCenterOfUnits (units) {
   return { x: tempX, y: tempY }
 }
 
-export function setUpThreePointSquad () {
+export function initializeThreePointSquad () {
   this.queuedUnits[1].targetToFollow = this.queuedUnits[0]
   this.queuedUnits[2].targetToFollow = this.queuedUnits[1]
+}
+
+export function setUpFollower () {
+  var temp = this.targetToFollow
+  if (!temp) return
+  this.targetToFollow = temp.creep
+  this.brain = followTarget
 }

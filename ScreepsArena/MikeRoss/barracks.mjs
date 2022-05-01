@@ -2,9 +2,9 @@ import { } from 'game/utils'
 import { } from 'game/prototypes'
 import { WORK, CARRY, MOVE, ATTACK, HEAL, TOUGH, RANGED_ATTACK } from 'game/constants'
 import { QUEUED, FULL, ALIVE, SUCCESS, FAILURE, RUNNING } from './global'
-import { followTarget, guardBaseChokePoints } from './defensive'
+import { guardBaseChokePoints } from './defensive'
 import { genericSupport, genericRangedAttack, attackEnemyBase } from './offensive'
-import { fillSpawn, setUpThreePointSquad } from './neutral'
+import { fillSpawn, setUpFollower, initializeThreePointSquad } from './neutral'
 // ========================================
 //          *****Creeps*****
 // ========================================
@@ -28,7 +28,7 @@ export var privateHealer = {
   squad: 'none',
   status: QUEUED,
   behaviors: [],
-  brain: followTarget,
+  brain: setUpFollower,
   targetToFollow: 'none',
   handleCombat: genericSupport
 }
@@ -54,7 +54,7 @@ export var privateRanger = {
   squad: 'none',
   status: QUEUED,
   behaviors: [],
-  brain: followTarget,
+  brain: setUpFollower,
   targetToFollow: 'none',
   handleCombat: genericRangedAttack
 }
@@ -107,7 +107,7 @@ export var primitiveThreePointSquad = {
   numberOfUnits: 0,
   status: QUEUED,
   act: genericBrainDictator,
-  setup: setUpThreePointSquad
+  setup: initializeThreePointSquad
 }
 
 export var defenderSquad = {

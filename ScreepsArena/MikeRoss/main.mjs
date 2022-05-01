@@ -14,9 +14,11 @@ import { } from './screepBrain'
 
 import { } from './defensive'
 
+// just about ready for my first arena :)
+
 // needs base defenders
 // refactor this spawning method, it is good!
-var movers = createSquad(primitiveBrainSquad, [privateMover, privateMover, privateMover])
+var movers = createSquad(primitiveBrainSquad, [privateMover, privateMover])
 var defenders = createSquad(defenderSquad, [primitiveDefender, primitiveDefender])
 var secondLineDefenders = createSquad(defenderSquad, [primitiveDefender, primitiveDefender])
 // var moverBrain;
@@ -29,65 +31,47 @@ var spawnTimer = 3
 var spawnDelay = 3
 export function loop () {
   spawnTimer++
+
   if (!spawner) spawner = getObjectsByPrototype(StructureSpawn)[0]
-  // if(!moverBrain) moverBrain = new binaryBrain(privateMover.brain);
+
   if (spawnTimer > spawnDelay) {
-    if (movers.status !== FULL) {
-      var spawnedMover = spawnSquad(movers, spawner)
-      if (spawnedMover) {
-        spawnDelay = spawnedMover.creep.body.length
-        spawnTimer = 0
-      }
+    var spawnedCreep
+
+    if (movers.status !== FULL) { // squad to spawn variable
+      spawnedCreep = spawnSquad(movers, spawner)
     } else if (defenders.status !== FULL) {
-      var spawnedDef = spawnSquad(defenders, spawner)
-      if (spawnedDef) {
-        spawnDelay = spawnedDef.creep.body.length
-        spawnTimer = 0
-      }
+      spawnedCreep = spawnSquad(defenders, spawner)
     } else if (secondLineDefenders.status !== FULL) {
-      var newSpawn = spawnSquad(secondLineDefenders, spawner)
-      if (newSpawn) {
-        spawnDelay = newSpawn.creep.body.length
-        spawnTimer = 0
-      }
+      spawnedCreep = spawnSquad(secondLineDefenders, spawner)
     } else if (privateThreePointSquad.status !== FULL) {
-      var spawnedThreePoint = spawnSquad(privateThreePointSquad, spawner)
-      if (spawnedThreePoint) {
-        spawnDelay = spawnedThreePoint.weight
-        spawnTimer = 0
-        if (spawnedThreePoint.targetToFollow) {
-          if (spawnedThreePoint.body[0] === HEAL) spawnedThreePoint.targetToFollow = privateThreePointSquad.units[1].creep
-          else spawnedThreePoint.targetToFollow = privateThreePointSquad.units[0].creep
-        // console.log(privateThreePointSquad.units);
+      spawnedCreep = spawnSquad(privateThreePointSquad, spawner)
+      if (spawnedCreep) {
+        if (spawnedCreep.targetToFollow) {
+          if (spawnedCreep.body[0] === HEAL) spawnedCreep.targetToFollow = privateThreePointSquad.units[1].creep
+          else spawnedCreep.targetToFollow = privateThreePointSquad.units[0].creep
         }
-      // var newBrain = new binaryBrain(spawnedThreePoint.behaviors);
-      // spawnedMover.brain = newBrain.treeMap;
       }
     } else if (secondThreePointSquad.status !== FULL) {
-      var secondSpawned = spawnSquad(secondThreePointSquad, spawner)
-      if (secondSpawned) {
-        spawnDelay = secondSpawned.weight
-        spawnTimer = 0
-        if (secondSpawned.targetToFollow) {
-          if (secondSpawned.body[0] === HEAL) secondSpawned.targetToFollow = secondThreePointSquad.units[1].creep
-          else secondSpawned.targetToFollow = secondThreePointSquad.units[0].creep
-        // console.log(privateThreePointSquad.units);
+      spawnedCreep = spawnSquad(secondThreePointSquad, spawner)
+      if (spawnedCreep) {
+        if (spawnedCreep.targetToFollow) {
+          if (spawnedCreep.body[0] === HEAL) spawnedCreep.targetToFollow = secondThreePointSquad.units[1].creep
+          else spawnedCreep.targetToFollow = secondThreePointSquad.units[0].creep
         }
       }
     } else if (thirdThreePointSquad.status !== FULL) {
-      var thirdSpawned = spawnSquad(thirdThreePointSquad, spawner)
-      if (thirdSpawned) {
-        spawnDelay = thirdSpawned.weight
-        spawnTimer = 0
-        if (thirdSpawned.targetToFollow) {
-          if (thirdSpawned.body[0] === HEAL) thirdSpawned.targetToFollow = thirdThreePointSquad.units[1].creep
-          else thirdSpawned.targetToFollow = thirdThreePointSquad.units[0].creep
-        // console.log(privateThreePointSquad.units);
+      spawnedCreep = spawnSquad(thirdThreePointSquad, spawner)
+      if (spawnedCreep) {
+        if (spawnedCreep.targetToFollow) {
+          if (spawnedCreep.body[0] === HEAL) spawnedCreep.targetToFollow = thirdThreePointSquad.units[1].creep
+          else spawnedCreep.targetToFollow = thirdThreePointSquad.units[0].creep
         }
       }
     }
+    if (spawnedCreep) spawnDelay = spawnedCreep.bodyCount
   }
 
+  if (spawnTimer > spawnDelay) spawnTimer = 0
   if (movers.units.length > 0) movers.act()
   if (defenders.units.length > 0) defenders.act()
   if (secondLineDefenders.units.length > 0) secondLineDefenders.act()

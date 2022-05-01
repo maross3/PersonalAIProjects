@@ -218,6 +218,7 @@ export function defaultSquadRole () {
   })
 } // legacy
 
+// calling units a bottle neck (after pathfinding)
 export function binaryBrainSquadRole () {
   if (this.numberOfUnits === 0) return
   if (!this.currentNode) this.currentNode = 0
@@ -278,6 +279,7 @@ export function spawnSquad (sqd, spawner) {
   var spawnedCreep = spawner.spawnCreep(creepMakeUp).object
 
   if (spawnedCreep) {
+    creepToSpawn.bodyCount = creepMakeUp.length
     creepToSpawn.creep = spawnedCreep
     creepToSpawn.status = ALIVE
 

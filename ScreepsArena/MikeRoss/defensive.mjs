@@ -4,6 +4,7 @@ import { ERR_NOT_IN_RANGE } from 'game/constants'
 import { COMBAT } from './global'
 import { calculateAngle, shortDistanceDirection, calculateDistance } from './mathUtils'
 
+// needs to be tested in the arena
 export function selfDefense (self) {
   var enemies = getObjectsByPrototype(Creep).filter(c => !c.my)
   var closestEnemy = findClosestByRange(self, enemies)

@@ -40,7 +40,7 @@ export var privateMover = {
   creep: 'none',
   body: [WORK, CARRY, MOVE],
   ratio: [0.33, 0.33, 0.33],
-  weight: 5,
+  weight: 4,
   squad: 'none',
   status: QUEUED,
   behaviors: [],

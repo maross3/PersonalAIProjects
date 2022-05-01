@@ -1,6 +1,6 @@
 import { Creep } from 'game/prototypes'
-import { getObjectsByPrototype, getRange, findClosestByRange } from 'game/utils'
-
+import { getObjectsByPrototype, getRange, findClosestByRange, getTicks } from 'game/utils'
+import { ERR_NOT_IN_RANGE } from 'game/constants'
 import { COMBAT } from './global'
 import { calculateAngle, shortDistanceDirection, calculateDistance } from './mathUtils'
 
@@ -33,5 +33,23 @@ export function followTarget () {
     this.creep.move(shortDistanceDirection(angle))
   } else {
     this.creep.moveTo(this.targetToFollow)
+  }
+}
+
+export function guardBase () {
+  if (!this.creep) return
+
+  if (!this.top) {
+    if (this.squad.units.length === 1) this.top = true
+    else this.top = false
+  }
+
+  if (this.top === false) {
+    if (this.creep.y !== 10) this.creep.moveTo({ x: 5, y: 10 })
+  } else if (this.creep.y !== 80) this.creep.moveTo({ x: 5, y: 80 })
+
+  if (getTicks() % 10 === 0) var enemy = selfDefense(this.creep)
+  if (enemy) {
+    if (this.creep.attack(enemy) === ERR_NOT_IN_RANGE) this.creep.moveTo(enemy)
   }
 }

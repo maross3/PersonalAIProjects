@@ -3,7 +3,11 @@ import { StructureSpawn } from 'game/prototypes'
 import { getObjectsByPrototype, getCpuTime } from 'game/utils'
 
 import { FULL } from './global'
-import { primitiveBrainSquad, primitiveThreePointSquad, privateMover, privateHealer, privateOffense, privateRanger, createSquad, spawnSquad } from './barracks'
+import {
+  primitiveBrainSquad, primitiveThreePointSquad, privateMover, privateHealer,
+  privateOffense, privateRanger, createSquad, spawnSquad, primitiveDefender,
+  defenderSquad
+} from './barracks'
 import { } from './debugHelper'
 import { } from './neutral'
 import { } from './screepBrain'
@@ -11,6 +15,7 @@ import { } from './screepBrain'
 import { } from './defensive'
 
 var movers = createSquad(primitiveBrainSquad, [privateMover, privateMover, privateMover])
+var defenders = createSquad(defenderSquad, [primitiveDefender, primitiveDefender])
 // var moverBrain;
 var privateThreePointSquad = createSquad(primitiveThreePointSquad, [privateOffense, privateRanger, privateHealer])
 var spawner
@@ -24,6 +29,8 @@ export function loop () {
     // var newBrain = Object.create(moverBrain);
     // spawnedMover.brain = newBrain.treeMap;
     }
+  } else if (defenders.status !== FULL) {
+    spawnSquad(defenders, spawner)
   } else if (privateThreePointSquad.status !== FULL) {
     var spawnedThreePoint = spawnSquad(privateThreePointSquad, spawner)
     if (spawnedThreePoint) {
@@ -38,6 +45,7 @@ export function loop () {
   }
 
   if (movers.units.length > 0) movers.act()
+  if (defenders.units.length > 0) defenders.act()
   if (privateThreePointSquad.units.length > 0) privateThreePointSquad.act()
   console.log(getCpuTime())
 }

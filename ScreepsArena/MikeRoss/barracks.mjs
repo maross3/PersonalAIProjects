@@ -3,7 +3,7 @@ import { StructureSpawn, StructureContainer, Source } from 'game/prototypes'
 import { RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK, HEAL, TOUGH, RANGED_ATTACK } from 'game/constants'
 
 import { QUEUED, ALIVE, FAILURE, RUNNING, SUCCESS, FULL } from './global'
-import { selfDefense, followTarget } from './defensive'
+import { selfDefense, followTarget, guardBase } from './defensive'
 import { attack, genericSupport, genericRangedAttack, attackEnemyBase } from './offensive'
 import { harvestFromSource, findCenterOfUnits, withdrawFromSource, depositToSpawner, fillSpawn } from './neutral'
 // ========================================
@@ -86,6 +86,16 @@ export var privateRanger = {
   handleCombat: genericRangedAttack
 }
 
+export var primitiveDefender = {
+  creep: 'none',
+  body: [TOUGH, ATTACK, MOVE],
+  ratio: [0.5, 0.25, 0.25],
+  weight: 6,
+  squad: 'none',
+  status: QUEUED,
+  behaviors: [],
+  brain: guardBase
+}
 // ========================================
 //        *****CreepRoles*****
 // ========================================
@@ -188,6 +198,13 @@ export var primitiveThreePointSquad = {
   act: genericBrainDictator
 }
 
+export var defenderSquad = {
+  units: [],
+  queuedUnits: [],
+  numberOfUnits: 0,
+  status: QUEUED,
+  act: genericBrainDictator
+}
 // ========================================
 //        *****SquadRoles*****
 // ========================================
@@ -253,7 +270,6 @@ export var createSquad = (squad, units) => {
 
 export function spawnSquad (sqd, spawner) {
   var creepToSpawn = sqd.queuedUnits[sqd.numberOfUnits]
-
   if (!creepToSpawn) {
     sqd.status = FULL
     return false

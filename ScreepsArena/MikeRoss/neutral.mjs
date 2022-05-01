@@ -40,8 +40,9 @@ export function withdrawFromSource (creep, source) {
 export function fillSpawn () {
   if (!this.spawner) this.spawner = getObjectsByPrototype(StructureSpawn)[0]
   if (!this.energySource) this.energySource = getObjectsByPrototype(StructureContainer)[0]
+  if (!this.energySource.store.getUsedCapacity(RESOURCE_ENERGY)) this.energySource = getObjectsByPrototype(StructureContainer).find(s => !s.store.getFreeCapacity())
 
-  if (this.creep.store.getFreeCapacity(RESOURCE_ENERGY)) withdrawFromSource(this.creep, this.energySource) // makesure this.creep is calling on individual creeps
+  if (this.creep.store.getFreeCapacity(RESOURCE_ENERGY)) withdrawFromSource(this.creep, this.energySource)
   else if (this.creep.transfer(this.spawner, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) this.creep.moveTo(this.spawner)
   return RUNNING
 }

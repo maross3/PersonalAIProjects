@@ -1,40 +1,13 @@
-import { getObjectsByPrototype, getTicks } from 'game/utils'
-import { StructureSpawn, StructureContainer, Source } from 'game/prototypes'
-import { RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK, HEAL, TOUGH, RANGED_ATTACK } from 'game/constants'
-
-import { QUEUED, ALIVE, FAILURE, RUNNING, SUCCESS, FULL } from './global'
-import { selfDefense, followTarget, guardBase } from './defensive'
-import { attack, genericSupport, genericRangedAttack, attackEnemyBase } from './offensive'
-import { harvestFromSource, findCenterOfUnits, withdrawFromSource, depositToSpawner, fillSpawn } from './neutral'
+import { } from 'game/utils'
+import { } from 'game/prototypes'
+import { WORK, CARRY, MOVE, ATTACK, HEAL, TOUGH, RANGED_ATTACK } from 'game/constants'
+import { QUEUED, FULL, ALIVE, SUCCESS, FAILURE, RUNNING } from './global'
+import { followTarget, guardBase } from './defensive'
+import { genericSupport, genericRangedAttack, attackEnemyBase } from './offensive'
+import { fillSpawn } from './neutral'
 // ========================================
 //          *****Creeps*****
 // ========================================
-export var minerCreep = { // W,C,M
-  creep: 'none',
-  body: [WORK, CARRY, MOVE],
-  ratio: [0.5, 0.25, 0.25],
-  squad: 'none',
-  status: QUEUED,
-  act: minerRole
-}
-
-export var generalistWorkerCreep = { // generalist W,C,M,A
-  creep: 'none',
-  body: [WORK, CARRY, MOVE, ATTACK],
-  ratio: [0.25, 0.25, 0.25, 0.25],
-  squad: 'none',
-  status: QUEUED,
-  act: minerRole
-}
-
-export var rampartWorkerCreep = { // W,C,M
-  creep: 'none',
-  body: [WORK, CARRY, MOVE],
-  ratio: [0.25, 0.25, 0.50],
-  squad: 'none',
-  status: QUEUED,
-  act: extensionRushFillRole
-}
 
 export var privateMover = {
   creep: 'none',
@@ -96,67 +69,12 @@ export var primitiveDefender = {
   behaviors: [],
   brain: guardBase
 }
-// ========================================
-//        *****CreepRoles*****
-// ========================================
-function minerRole () {
-  if (!this.spawner) this.spawner = getObjectsByPrototype(StructureSpawn)[0]
-  if (!this.energySource) this.energySource = getObjectsByPrototype(Source)[0]
-  if (!this.creep.store) return
-
-  if (this.creep.store.getFreeCapacity(RESOURCE_ENERGY)) harvestFromSource(this.creep, this.energySource) // makesure this.creep is calling on individual creeps
-  else if (this.creep.transfer(this.spawner, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) this.creep.moveTo(this.spawner)
-};
-
-function extensionRushFillRole () {
-  if (!this.spawner) this.spawner = getObjectsByPrototype(StructureSpawn)[0]
-  if (!this.energySource) this.energySource = getObjectsByPrototype(StructureContainer)[0]
-  if (!this.creep.store) return
-
-  withdrawFromSource(this.creep, this.energySource)
-  depositToSpawner(this.creep, this.spawner)
-
-  // this.spawner.store.getUsedCapacity(RESOURCE_ENERGY) > 250: needs to have delay
-  if (this.squad.numberOfUnits === 2 && getTicks() % 50 === 0) return SUCCESS
-  return RUNNING
-}
-
 /* TODO
 function privateMoverBrain(){
   if (!this.breakingBillboard) this.breakingBillboard = false
 
   if (!this.breakingBillboard)
     primitiveBinaryBrainModule(this)
-}
-*/
-
-// ========================================
-//       *****BrainModules*****
-// ========================================
-/* safe to delete?
-function primitiveBinaryBrainModule (unit) {
-  if (!this.binaryNeuron) this.binaryNeuron = unit.brain
-  if (!this.actionPotential) this.actionPotential = 0
-
-  if (!this.binaryNeuron[this.actionPotential]) {
-    console.log(this.actionPotential + ' did not reach synapse!')
-    this.actionPotential = 0
-    return
-  }
-
-  if (this.binaryNeuron[this.actionPotential].left.behavior(unit) === RUNNING) return
-  else if (this.binaryNeuron[this.actionPotential].left.behavior(unit) === SUCCESS) {
-    this.actionPotential = this.binaryNeuron[this.actionPotential].left.val
-    return
-  }
-  if (this.binaryNeuron[this.actionPotential].right.behavior(unit) === RUNNING) return
-  if (this.binaryNeuron[this.actionPotential].right.behavior(unit) === FAILURE) {
-    this.actionPotential = 0
-    return
-  }
-  if (this.binaryNeuron[this.actionPotential].right.behavior(unit) === SUCCESS) {
-    this.actionPotential = this.binaryNeuron[this.actionPotential].right.val
-  }
 }
 
 TODO
@@ -167,13 +85,6 @@ function shortOfSquadBillboard(){
 // ========================================
 //          *****Squads*****
 // ========================================
-export var baseSquad = {
-  units: [],
-  queuedUnits: [],
-  numberOfUnits: 0,
-  act: defaultSquadRole
-}
-
 export var binaryBrainSquad = {
   units: [],
   queuedUnits: [],
@@ -208,15 +119,6 @@ export var defenderSquad = {
 // ========================================
 //        *****SquadRoles*****
 // ========================================
-export function defaultSquadRole () {
-  if (this.numberOfUnits === 0) return
-  var closestThreat = selfDefense(findCenterOfUnits(this.units))
-  this.units.forEach((unit, i) => {
-    if (closestThreat !== false && unit.body.includes(ATTACK)) attack(unit.creep, closestThreat)
-    else if (unit.act !== extensionRushFillRole) unit.act = extensionRushFillRole
-    unit.act()
-  })
-} // legacy
 
 // calling units a bottle neck (after pathfinding)
 export function binaryBrainSquadRole () {

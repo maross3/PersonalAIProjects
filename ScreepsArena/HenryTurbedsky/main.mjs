@@ -3,14 +3,16 @@ import { getCpuTime } from '/game/utils';
 // import {RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK } from '/game/constants';
 import { getTicks, arenaInfo } from 'game';
 
-import { BasicCommander } from './Commanders/BasicCommander'
+//import { BasicCommander } from './Commanders/BasicCommander'
+import { Commander } from './Commanders/Commander'
 
 //
 //import {worker} from './Roles/engineerRoles'
 //
 
 
-var basicCommander = new BasicCommander();
+//var basicCommander = new BasicCommander();
+var commander = new Commander();
 //var heatmap = Array(100).fill( Array(100).fill(0) );
 
 export function loop()
@@ -35,8 +37,8 @@ export function loop()
   // }
 
 
-
-  basicCommander.run();
+  commander.run();
+  //basicCommander.run();
   console.log(`CpuTime: ${getCpuTime()}`);
   console.log(`CpuTime Left: ${arenaInfo.cpuTimeLimit-getCpuTime()}`); //debug
 

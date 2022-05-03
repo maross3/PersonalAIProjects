@@ -5,13 +5,14 @@ import { searchPath } from 'game/path-finder';
 import { getTicks } from 'game';
 import { } from '/arena';
 
-import * as Tools from '../Tools/tools'
-import * as RoleTools from '../Tools/roleTools'
+//import * as Tools from '../Tools/tools'
+//import * as RoleTools from '../Tools/roleTools'
 
-import { Squad } from '../Squads/Squad'
+//import { Squad } from '../Squads/Squad'
+import { TestSquad } from '../Squads/testSquad'
 
 
-export class BasicCommander {
+export class Commander {
 
   static squadList;
   static creepPool;
@@ -39,7 +40,7 @@ export class BasicCommander {
       defensive: null,
     };
 
-    this.debugCode = CTools.debugCommander;
+    this.debugCode = this.debugCommander;
     this.debug = false;
   }
 
@@ -49,9 +50,7 @@ export class BasicCommander {
   run()
   {
     if(!this.spawnLocations[0].spawner) this.spawnLocations[0].spawner = getObjectsByPrototype(StructureSpawn).find(s => s.my);
-    var squad = new Squad();
-
-    squadSheild.setTarget({x:35, y:35});
+    var squad = new TestSquad();
 
     if(getTicks() == 1){
       this.requestCreepsForSquad(squad, this.spawnLocations[0]);
@@ -59,8 +58,7 @@ export class BasicCommander {
 
     this.runCreepSpawningQueues();
 
-    this.squadList = this.squadList.concat(this.enrollCreepsToSquadsInFillQueue());
-
+    this.enrollCreepsToSquadsInFillQueue();
 
     if(this.squadList.length > 0){
       this.squadList.forEach((squad, i)=>{
@@ -117,12 +115,20 @@ export class BasicCommander {
         this.squadList.push(squad);
       }
     });
-
-    return activatedSquads;
   }
 //// TODO: check if squad class works. But first need a commander that doesnt use squad Tools.
 //// enrollCreepsToSquadsInFillQueue can still be better.
 
 
+  debugCommander()
+  {
+    var str =
+      `
+      ||||||||| debugCommander ||||||||||
+      Commander of type: Not Set Up!!
+      ||||||||||||||||||||||||||||||||||||`
+    console.log(str);
+    return str;
+  }
 
 }

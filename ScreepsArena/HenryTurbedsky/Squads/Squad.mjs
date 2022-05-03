@@ -5,11 +5,11 @@ import { searchPath } from 'game/path-finder';
 import { Visual } from '/game/visual';
 
 import * as Tools from '../Tools/tools'
-import * as RoleTools from './roleTools'
+import * as RoleTools from '../Tools/roleTools'
 import {worker} from '../Roles/engineerRoles'
 
 
-export class BasicSquad {
+export class Squad {
 
   static currentRoles;
   static unfilledRoles;
@@ -20,11 +20,9 @@ export class BasicSquad {
   static debugColor;
   static debug;
 
-  //constructor(roleArray){
-  constructor(){
+  constructor(roles){
     this.currentRoles = [];
-    //this.unfilledRoles = roleArray;
-    this.unfilledRoles = [ Object.create(worker), Object.create(worker), Object.create(worker),]
+    this.unfilledRoles = roles;
     this.hasBeenActivated = false;
 
     this.debug = false;
@@ -38,7 +36,7 @@ export class BasicSquad {
 
 
   get center(){
-    var temp = 0, tempX = 0;
+    var tempY = 0, tempX = 0;
     this.currentRoles?.forEach((role, i) => {
       tempX += role.creep.x;
       tempY += role.creep.y;

@@ -5,12 +5,8 @@ import { searchPath } from 'game/path-finder';
 import { getTicks } from 'game';
 import { } from '/arena';
 
-//import * as Tools from '../Tools/tools'
-//import * as RoleTools from '../Tools/roleTools'
 
-//import { Squad } from '../Squads/Squad'
 import { TestSquad } from '../Squads/testSquad'
-
 
 export class Commander {
 
@@ -49,7 +45,9 @@ export class Commander {
 
   run()
   {
-    if(!this.spawnLocations[0].spawner) this.spawnLocations[0].spawner = getObjectsByPrototype(StructureSpawn).find(s => s.my);
+    if(!this.spawnLocations[0].spawner)
+      this.spawnLocations[0].spawner = getObjectsByPrototype(StructureSpawn).find(s => s.my);
+
     var squad = new TestSquad();
 
     if(getTicks() == 1){
@@ -102,7 +100,7 @@ export class Commander {
     return newCreep;
   }
 
-  // Removes full squads from squadArray and returns an array newly actived squads.
+  // Removes full squads from squadFillQueue and adds hasBeenActivated squadList
   enrollCreepsToSquadsInFillQueue(){
     if (this.squadFillQueue.length <= 0) return false;
 
@@ -116,8 +114,6 @@ export class Commander {
       }
     });
   }
-//// TODO: check if squad class works. But first need a commander that doesnt use squad Tools.
-//// enrollCreepsToSquadsInFillQueue can still be better.
 
 
   debugCommander()

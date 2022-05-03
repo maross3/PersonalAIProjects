@@ -6,7 +6,6 @@ import { Visual } from '/game/visual';
 
 import * as Tools from '../Tools/tools'
 import * as RoleTools from '../Tools/roleTools'
-import {worker} from '../Roles/engineerRoles'
 
 
 export class Squad {

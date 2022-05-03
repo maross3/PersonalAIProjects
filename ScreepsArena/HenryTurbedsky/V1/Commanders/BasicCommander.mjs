@@ -61,7 +61,7 @@ export class BasicCommander {
       squadBasicSquad.debug = true;
       squadSheild.debug = true;
 
-      squadSheild.setTarget({x:25, y:25});
+      squadSheild.setTarget({x:35, y:35});
 
       this.putSquadOnQueue(squadBasicSquad, this.spawns[0]);
       this.putSquadOnQueue(squadSheild, this.spawns[0]);

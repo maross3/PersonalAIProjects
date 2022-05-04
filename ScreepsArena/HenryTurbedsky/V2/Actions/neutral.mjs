@@ -7,15 +7,18 @@ import { Visual } from '/game/visual';
 
 
 
+
 export function move(target){
   this.creep.moveTo(target);
 }
+
 
 export function moveCircle(){
   if(!this.circleDirection || this.circleDirection > 8) this.circleDirection = 1;
   this.creep.move(this.circleDirection);
   if(this.creep.fatigue == 0) this.circleDirection++;
 }
+
 
 export function mineAndFill()
 {

@@ -1,6 +1,6 @@
 import { } from 'game/utils'
 import { } from 'game/prototypes'
-import { WORK, CARRY, MOVE, ATTACK, HEAL, TOUGH, RANGED_ATTACK } from 'game/constants'
+import { CARRY, MOVE, ATTACK, HEAL, TOUGH, RANGED_ATTACK } from 'game/constants'
 import { QUEUED, SUCCESS, FAILURE, RUNNING } from './global'
 import { guardBaseChokePoints } from './defensive'
 import { genericSupport, genericRangedAttack, attackEnemyBase } from './offensive'
@@ -11,8 +11,8 @@ import { fillSpawn, setUpFollower, initializeThreePointSquad } from './neutral'
 
 export var privateMover = {
   creep: 'none',
-  body: [WORK, CARRY, MOVE],
-  ratio: [0.33, 0.33, 0.33],
+  body: [CARRY, MOVE],
+  ratio: [0.5, 0.5],
   weight: 4,
   squad: 'none',
   status: QUEUED,
@@ -68,6 +68,19 @@ export var primitiveDefender = {
   status: QUEUED,
   behaviors: [],
   brain: guardBaseChokePoints
+}
+
+export var bomber = {
+  creep: 'none',
+  body: [ATTACK, MOVE],
+  ratio: [0.4, 0.6],
+  weight: 7,
+  squad: 'none',
+  status: QUEUED,
+  behaviors: [],
+  target: 'none',
+  brain: attackEnemyBase,
+  handleCombat: attackEnemyBase
 }
 /* TODO
 function privateMoverBrain(){

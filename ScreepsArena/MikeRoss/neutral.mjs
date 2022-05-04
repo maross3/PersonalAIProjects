@@ -11,7 +11,7 @@ var constSite
 export function buildStructureAt (creep, structure, x, y) {
   if (!constSite) {
     createConstructionSite(x, y, structure)
-    constSite = getObjectsByPrototype(ConstructionSite)[0]
+    constSite = getObjectsByPrototype(ConstructionSite)[0] // needs to be my
   }
   if (!constSite) return
 
@@ -38,9 +38,12 @@ export function withdrawFromSource (creep, source) {
 }
 
 export function fillSpawn () {
-  if (!this.spawner) this.spawner = getObjectsByPrototype(StructureSpawn)[0]
-  if (!this.energySource) this.energySource = getObjectsByPrototype(StructureContainer)[0]
-  if (!this.energySource.store.getUsedCapacity(RESOURCE_ENERGY)) this.energySource = getObjectsByPrototype(StructureContainer).find(s => !s.store.getFreeCapacity())
+  if (!this.spawner) this.spawner = getObjectsByPrototype(StructureSpawn).find(s => s.my)
+  if (!this.energySource) this.energySource = findClosestByRange(this.creep, getObjectsByPrototype(StructureContainer))
+  if (!this.energySource.store) return
+  if (!this.energySource.store.getUsedCapacity(RESOURCE_ENERGY)) {
+    this.energySource = findClosestByRange(this.creep, getObjectsByPrototype(StructureContainer).filter(s => !s.store.getFreeCapacity()))
+  }
 
   if (this.creep.store.getFreeCapacity(RESOURCE_ENERGY)) withdrawFromSource(this.creep, this.energySource)
   else if (this.creep.transfer(this.spawner, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) this.creep.moveTo(this.spawner)

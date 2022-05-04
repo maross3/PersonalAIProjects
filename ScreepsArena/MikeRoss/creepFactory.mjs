@@ -17,6 +17,7 @@ export var createSquad = (squad, units) => {
 
 export function spawnSquad (sqd, spawner) {
   var creepToSpawn = sqd.queuedUnits[0]
+
   if (!creepToSpawn) {
     sqd.status = FULL
     return false

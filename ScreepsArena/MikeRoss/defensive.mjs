@@ -1,5 +1,5 @@
 import { Creep } from 'game/prototypes'
-import { getObjectsByPrototype, getRange, findClosestByRange, getTicks } from 'game/utils'
+import { getObjectsByPrototype, getRange, findClosestByRange } from 'game/utils'
 import { ERR_NOT_IN_RANGE } from 'game/constants'
 import { COMBAT } from './global'
 import { calculateAngle, shortDistanceDirection, calculateDistance } from './mathUtils'
@@ -7,9 +7,10 @@ import { calculateAngle, shortDistanceDirection, calculateDistance } from './mat
 // needs to be tested in the arena
 export function selfDefense (self) {
   var enemies = getObjectsByPrototype(Creep).filter(c => !c.my)
-  var closestEnemy = findClosestByRange(self, enemies)
-  if (closestEnemy && getRange(closestEnemy, self) <= 10) {
-    this.creep.status = COMBAT
+  var closestEnemy = findClosestByRange(self.creep, enemies)
+
+  if (closestEnemy && getRange(closestEnemy, self.creep) <= 35) {
+    self.status = COMBAT
     return closestEnemy
   }
   return false
@@ -38,18 +39,18 @@ export function followTarget () {
 
 export function guardBaseChokePoints () {
   if (!this.creep) return
-
   if (!this.top) {
     if (this.squad.units.length === 1) this.top = true
     else this.top = false
   }
 
   if (this.top === false) {
-    if (this.creep.y !== 10) this.creep.moveTo({ x: 5, y: 10 })
-  } else if (this.creep.y !== 80) this.creep.moveTo({ x: 5, y: 80 })
+    if (this.creep.y !== 10) this.creep.moveTo({ x: this.creep.x, y: 10 })
+  } else if (this.creep.y !== 80) this.creep.moveTo({ x: this.creep.x, y: 80 })
 
-  if (getTicks() % 10 === 0) var enemy = selfDefense(this.creep)
-  if (enemy) {
-    if (this.creep.attack(enemy) === ERR_NOT_IN_RANGE) this.creep.moveTo(enemy)
+  this.enemy = selfDefense(this)
+
+  if (this.enemy) {
+    if (this.creep.attack(this.enemy) === ERR_NOT_IN_RANGE) this.creep.moveTo(this.enemy)
   }
 }

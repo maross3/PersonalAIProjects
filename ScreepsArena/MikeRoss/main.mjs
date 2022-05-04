@@ -6,15 +6,10 @@ import { FULL } from './global'
 import {
   primitiveBrainSquad, primitiveThreePointSquad, privateMover, privateHealer,
   privateOffense, privateRanger, primitiveDefender,
-  defenderSquad
+  defenderSquad, bomber
 } from './barracks'
 
 import { createSquad, spawnSquad } from './creepFactory'
-import { } from './debugHelper'
-import { } from './neutral'
-import { } from './screepBrain'
-
-import { } from './defensive'
 
 // just about ready for my first arena :)
 
@@ -33,17 +28,18 @@ squadsToSpawn.push(secondThreePointSquad)
 var thirdThreePointSquad = createSquad(primitiveThreePointSquad, [privateOffense, privateRanger, privateHealer])
 squadsToSpawn.push(thirdThreePointSquad)
 
+var bomberSquad = createSquad(primitiveBrainSquad, [bomber, bomber, bomber, bomber, bomber, bomber, bomber])
+squadsToSpawn.push(bomberSquad)
+
 var spawner
 var spawnTimer = 3
 var spawnDelay = 3
 export function loop () {
   spawnTimer++
-
-  if (!spawner) spawner = getObjectsByPrototype(StructureSpawn)[0]
+  if (!spawner) spawner = getObjectsByPrototype(StructureSpawn).find(s => s.my)
 
   if (spawnTimer > spawnDelay && squadsToSpawn.length > 0) {
     var spawnedCreep = spawnSquad(squadsToSpawn[0], spawner)
-
     if (squadsToSpawn[0].status === FULL) {
       squadsToSpawn.shift()
       squadsToSpawn[0].setup()
@@ -59,6 +55,6 @@ export function loop () {
   if (privateThreePointSquad.units.length > 0) privateThreePointSquad.act()
   if (secondThreePointSquad.units.length > 0) secondThreePointSquad.act()
   if (thirdThreePointSquad.units.length > 0) thirdThreePointSquad.act()
-
+  if (bomberSquad.units.length > 0) bomberSquad.act()
   console.log(getCpuTime())
 }

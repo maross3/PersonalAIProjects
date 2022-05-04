@@ -11,16 +11,8 @@ import { gather, refill } from '../Behaviors/neutral'
 import { Role } from './Role'
 
 export class TestRole extends Role {
-
   constructor(){
-    super([WORK, CARRY, MOVE,]);
-    // this.act = Neutral.mineAndFill;
-    // this.ideal = Neutral.mineAndFill;
-    // this.retreat = Neutral.mineAndFill;
-    // this.move = Neutral.mineAndFill;
-
-    this.tree = new BehaviorTree([empty, 0, gather, refill], this);
+    super([WORK, CARRY, MOVE,], new BehaviorTree([empty, 0, gather, refill]));
+    // this.tree = new BehaviorTree([empty, 0, gather, refill], {creep:this.creep,});
   }
-
-
 }

@@ -1,21 +1,20 @@
 
 class Node {
-  static tree;
   static behavior;
   static nodes;
+  static board;
 
-  constructor(behavior, tree){
+  constructor(behavior, board){
       this.behavior = behavior;
       this.nodes = [];
-
-      this.tree = tree;
+      this.board = board;
   }
 
   run(){
     // Possible values: "continue", "bookMark", "done",
     var response = this.behavior();
     if( response == "done") return "done";
-    if( response == "bookMark" ) this.tree.bookMarkNode = this;
+    if( response == "bookMark" ) this.board.bookMark(this);
     for (var i = 0; i < this.nodes.length; i++) this.nodes[i].run();
     return "done";
   }
@@ -40,15 +39,14 @@ export class BehaviorTree {
   static nodeArray;
   static board;
 
-  static owner;
+  constructor(behaviorArray){
+    this.board = {};
+    this.board.bookMark = this.bookMark.bind(this);
 
-  constructor(behaviorArray, owner){
-    this.owner = owner;
-    this.board = new Object();
     this.nodeArray = [];
     for (var i = 0; i < behaviorArray.length; i++) {
       if(behaviorArray[i] != 0){
-        this.nodeArray.push(new Node(behaviorArray[i], this))
+        this.nodeArray.push(new Node(behaviorArray[i], this.board))
       }else{
         this.nodeArray.push(0);
       }
@@ -66,6 +64,9 @@ export class BehaviorTree {
       }
     }
   }
+  bookMark(node){
+    this.bookMarkNode = node;
+  }
 
   run(){
     var tempNode = this.bookMarkNode;
@@ -76,5 +77,6 @@ export class BehaviorTree {
   display(){
     console.log(this.root.display(0));
   }
+
 
 }

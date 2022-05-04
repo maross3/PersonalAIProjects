@@ -9,12 +9,13 @@ import { Visual } from '/game/visual';
 
 
 export function gather(){
-  console.log("gather");
+  //console.log("gather");
+  console.log(this);
 
-  if(!this.tree.board.energyTarget)
-    this.tree.board.energyTarget = getObjectsByPrototype(Source)[0];
-  var source = this.tree.board.energyTarget;
-  var creep = this.tree.owner.creep;
+  if(!this.board.energyTarget)
+    this.board.energyTarget = getObjectsByPrototype(Source)[0];
+  var source = this.board.energyTarget;
+  var creep = this.board.creep;
 
   if(creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0)
     return "done";
@@ -26,18 +27,18 @@ export function gather(){
 }
 
 export function refill(){
-  console.log("refill");
+  //console.log("refill");
+  if(!this.board.refillTarget)
+    this.board.refillTarget = getObjectsByPrototype(StructureSpawn)[0];
+  var refill = this.board.refillTarget;
+  var creep = this.board.creep;
 
-  if(!this.tree.board.refillTarget)
-    this.tree.board.refillTarget = getObjectsByPrototype(StructureSpawn)[0];
-  var refill = this.tree.board.refillTarget;
-
-  if(this.tree.owner.creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0)
+  if(creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0)
     return "done";
 
-  if(this.tree.owner.creep.transfer(refill, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE)
+  if(creep.transfer(refill, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE)
   {
-    this.tree.owner.creep.moveTo(refill);
+    creep.moveTo(refill);
   }else{
     return "continue";
   }

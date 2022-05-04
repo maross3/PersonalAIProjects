@@ -19,13 +19,24 @@ export class Role {
   static retreat;
   static move;
 
+  static tree;
 
-  constructor(bodyMakeUp){
+
+  constructor(bodyMakeUp, tree){
     this.bodyMakeUp = bodyMakeUp;
-    this.creep = "none";
+    this.tree = tree;
   }
 
 
+  fillRole(creep)
+  {
+    this.creep = creep;
+    this.tree.board.creep = this.creep;
+  }
+  
+  died(){
+    this.tree.board.creep = this.creep;
+  }
 
   get position(){
     if(this.creep == "none") return undefined;

@@ -14,6 +14,7 @@ export function loop()
 
   commander.run();
 
+  console.log("\n=====================================================");
   console.log(`CpuTime: ${getCpuTime()}`);
   console.log(`CpuTime Left: ${arenaInfo.cpuTimeLimit-getCpuTime()}`);
 }

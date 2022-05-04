@@ -28,6 +28,22 @@ export class Squad {
   }
 
 
+  act(){
+    if(this.currentRoles.length > 0){
+      this.currentRoles.forEach((role, i)=>{
+        if(role.creep)
+          role.tree.run();
+        else
+          this.roleDied(i);
+      });
+
+      if(this.debug){
+        this.squadDebugLines();
+        this.debugSquad();
+      }
+    }
+  }
+
 
   get isFull(){
     return this.unfilledRoles.length == 0;
@@ -46,15 +62,19 @@ export class Squad {
   }
 
 
-  fillSquadRole(index, creep)
-  {
-    this.unfilledRoles[index].creep = creep;
+  fillSquadRole(index, creep){
+    this.unfilledRoles[index].fillRole(creep);
     this.currentRoles.push(this.unfilledRoles[index]);
     this.unfilledRoles.splice(index, 1);
   }
 
-  closestCreepToSquad(creepArray)
-  {
+  roleDied(index){
+    this.currentRoles[index].died();
+    this.unfilledRoles.push(this.currentRoles[index]);
+    this.currentRoles.splice(index, 1);
+  }
+
+  closestCreepToSquad(creepArray){
     return findClosestByPath(this.center, creepArray);
   }
 

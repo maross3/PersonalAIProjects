@@ -11,7 +11,7 @@ export class TestSquad extends Squad {
   act(){
     if(this.currentRoles.length > 0){
       this.currentRoles.forEach((roles, i)=>{
-        roles.act();
+        roles.tree.run();
       });
 
       if(this.debug){

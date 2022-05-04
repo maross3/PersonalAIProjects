@@ -4,9 +4,11 @@ class Node {
   static behavior;
   static nodes;
 
-  constructor(behavior){
+  constructor(behavior, tree){
       this.behavior = behavior;
       this.nodes = [];
+
+      this.tree = tree;
   }
 
   run(){
@@ -19,14 +21,14 @@ class Node {
   }
 
   display(layer){
-    var str = "["+layer+"](" + this.behavior.name;
-    if(this.nodes.length > 0) {str += " => {";}else{return str + ")";}
+    var str = "["+layer+"](" + this.behavior.name + ")";
     layer++;
+    if(this.nodes.length > 0) {str += "=>{";}else{return str;}
     for (var i = 0; i < this.nodes.length; i++){
       str += this.nodes[i].display(layer);
       if(i != this.nodes.length - 1) str += " ";
     }
-    return str + "}) ";
+    return str + "}";
   }
 }
 
@@ -36,12 +38,17 @@ export class BehaviorTree {
   static bookMarkNode;
 
   static nodeArray;
+  static board;
 
-  constructor(behaviorArray){
+  static owner;
+
+  constructor(behaviorArray, owner){
+    this.owner = owner;
+    this.board = new Object();
     this.nodeArray = [];
     for (var i = 0; i < behaviorArray.length; i++) {
       if(behaviorArray[i] != 0){
-        this.nodeArray.push(new Node(behaviorArray[i]))
+        this.nodeArray.push(new Node(behaviorArray[i], this))
       }else{
         this.nodeArray.push(0);
       }

@@ -4,8 +4,8 @@ import { RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK, TOUGH, HE
 import { searchPath } from 'game/path-finder';
 import { Visual } from '/game/visual';
 
-import * as Tools from '../Tools/tools'
-import * as RoleTools from '../Tools/roleTools'
+//import * as Tools from '../Tools/tools'
+//import * as RoleTools from '../Tools/roleTools'
 
 
 export class Squad {
@@ -88,7 +88,7 @@ export class Squad {
   fillSquad(creepPool){
     if(this.isFull) return true;
     this.unfilledRoles.forEach((openRole, roleIndex) =>{
-      var matchIndexes = RoleTools.indexesOfCreepsMatchingRoleBody(openRole, creepPool);
+      var matchIndexes = openRole.indexesOfCreepsMatchingRoleBody(creepPool);
 
       if(matchIndexes.length > 0){
         var closestMatch = this.indexOfClosestCreepToSquad(creepPool, matchIndexes);
@@ -104,11 +104,14 @@ export class Squad {
 
   //// TODO: If just one creep put circkle aroud it.
   squadDebugLines(){
-    if(!this.debugColor) this.debugColor = Tools.randomHex();
+    if(!this.debugColor) this.debugColor = this.randomHex();
     var center = this.center;
     this.currentRoles.forEach((roles, i)=>{
       new Visual().line(roles.creep, center, {color: this.debugColor});
     });
+  }
+  randomHex(){
+    return '#'+Math.floor(Math.random()*16777215).toString(16);
   }
 
   debugSquad()

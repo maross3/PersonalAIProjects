@@ -5,11 +5,6 @@ import { RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK, TOUGH, HE
 import { getTicks } from 'game'
 import { Visual } from '/game/visual';
 
-import * as Tools from '../Tools/tools'
-import * as RoleTools from '../Tools/roleTools'
-
-
-
 
 export function guardTarget(target){
   if(!target) target = this.target;

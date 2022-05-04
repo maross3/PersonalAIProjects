@@ -4,6 +4,3 @@ import { searchPath } from 'game/path-finder';
 import { RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK, TOUGH, HEAL, RANGED_ATTACK } from '/game/constants';
 import { getTicks } from 'game'
 import { Visual } from '/game/visual';
-
-import * as Tools from '../Tools/tools'
-import * as RoleTools from '../Tools/roleTools'

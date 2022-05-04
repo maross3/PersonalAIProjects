@@ -5,8 +5,6 @@ import { RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK, TOUGH, HE
 import { getTicks } from 'game'
 import { Visual } from '/game/visual';
 
-import * as Tools from '../Tools/tools'
-import * as RoleTools from '../Tools/roleTools'
 
 
 export function move(target){
@@ -24,6 +22,13 @@ export function mineAndFill()
   if(!this.spawner) this.spawner = getObjectsByPrototype(StructureSpawn)[0];
   if(!this.energySource) this.energySource = getObjectsByPrototype(Source)[0];
 
-  if(this.creep.store.getFreeCapacity(RESOURCE_ENERGY)) Tools.harvestFromSource(this.creep, this.energySource); // makesure this.creep is calling on individual creeps
+  if(this.creep.store.getFreeCapacity(RESOURCE_ENERGY)) harvestFromSource(this.creep, this.energySource); // makesure this.creep is calling on individual creeps
   else if(this.creep.transfer(this.spawner, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) this.creep.moveTo(this.spawner);
 };
+export function harvestFromSource(creep, source){
+  if(!creep.store.getFreeCapacity(RESOURCE_ENERGY))
+    return false;
+  if(creep.harvest(source) == ERR_NOT_IN_RANGE)
+    creep.moveTo(source);
+  return true;
+}

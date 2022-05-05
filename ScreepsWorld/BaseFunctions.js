@@ -1,14 +1,18 @@
 /* global ERR_NOT_IN_RANGE RESOURCE_ENERGY, WORK, CARRY, MOVE, FIND_STRUCTURES
-  FIND_MY_CONSTRUCTION_SITES */
+  FIND_MY_CONSTRUCTION_SITES findClosestByRange STRUCTURE_CONTAINER */
 
 var baseWorker = {
   creep: 'none',
-  body: [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE],
+  body: [WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
   act: fillSpawn
 }
 
 var stationaryWorker = {
   body: [WORK, WORK, WORK, WORK, CARRY, MOVE]
+}
+
+var baseRunner = {
+  body: [MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, CARRY, CARRY, CARRY, CARRY, CARRY]
 }
 
 module.exports = {
@@ -17,7 +21,30 @@ module.exports = {
   baseWorker,
   stationaryWorker,
   repairStructures,
-  buildAllConstructionSites
+  buildAllConstructionSites,
+  fillStructureTowerWithRunner,
+  baseRunner
+}
+
+function fillStructureTowerWithRunner (creep, tower) {
+  if (!creep) return
+  setCreepMemory(creep)
+
+  if (!creep.memory.filling) {
+    var source = findSource(creep)
+    if (creep.withdraw(source, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) creep.moveTo(source)
+  } else {
+    if (creep.transfer(tower, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) creep.moveTo(tower)
+  }
+}
+
+function findSource (creep) {
+  var containers = creep.room.find(STRUCTURE_CONTAINER, {
+    filter: (sc) => {
+      return (sc.store[RESOURCE_ENERGY])
+    }
+  })
+  return findClosestByRange(creep, containers)
 }
 
 function buildAllConstructionSites (creep, source) {
@@ -43,6 +70,7 @@ function findMyConstSites (creep) {
 }
 
 function keepExtenFull (creep, source, extensions, contrl) {
+  if (!creep) return
   setCreepMemory(creep)
 
   if (!creep.memory.filling) {
@@ -81,7 +109,7 @@ function repairStructures (creep, source) {
 
   var structure = creep.room.find(FIND_STRUCTURES, {
     filter: (str) => {
-      return (str.hits < str.hitsMax && str.pos.y > 2 && str.hitsMax < 500000)
+      return (str.hits < str.hitsMax && str.pos.y > 2)
     }
   })
 

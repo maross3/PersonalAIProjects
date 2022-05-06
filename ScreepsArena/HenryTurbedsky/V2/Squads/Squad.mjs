@@ -1,11 +1,8 @@
-import { getObjectsByPrototype, getRange, findClosestByPath, findClosestByRange } from '/game/utils';
+import { getObjectsByPrototype, getRange, findClosestByPath, findClosestByRange, getCpuTime } from '/game/utils';
 import { Creep, StructureSpawn, StructureContainer, Source, ConstructionSite, StructureTower } from '/game/prototypes';
 import { RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK, TOUGH, HEAL, RANGED_ATTACK } from '/game/constants';
 import { searchPath } from 'game/path-finder';
 import { Visual } from '/game/visual';
-
-//import * as Tools from '../Tools/tools'
-//import * as RoleTools from '../Tools/roleTools'
 
 
 export class Squad {
@@ -29,12 +26,19 @@ export class Squad {
 
 
   act(){
-    if(this.currentRoles.length > 0){
+    var ticksBefore = getCpuTime();
+    if(this.currentRoles.length){
       this.currentRoles.forEach((role, i)=>{
-        if(role.creep)
+        var ticksBefore2 = getCpuTime();
+        if(role.creep){
+          console.log("\nvvvvvvvvvv role.tree.run(); vvvvvvvvv\n");
           role.tree.run();
-        else
+          console.log("\n^^^^^^^^^^ role.tree.run(); ^^^^^^^^^^^^^");
+          console.log(`role.tree.run(); CpuTime: ${getCpuTime() - ticksBefore2}`);
+        }else{
           this.roleDied(i);
+          console.log(`this.roleDied(i); CpuTime: ${getCpuTime() - ticksBefore2}`);
+        }
       });
 
       if(this.debug){
@@ -42,6 +46,7 @@ export class Squad {
         this.debugSquad();
       }
     }
+    console.log(`\nact() CpuTime: ${getCpuTime() - ticksBefore}`);
   }
 
 

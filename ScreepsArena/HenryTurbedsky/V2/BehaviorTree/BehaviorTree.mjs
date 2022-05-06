@@ -1,3 +1,4 @@
+import { getCpuTime } from '/game/utils';
 
 class Node {
   static behavior;
@@ -11,8 +12,11 @@ class Node {
   }
 
   run(){
+    console.log(this.behavior.name);
+    var ticksBefore = getCpuTime();
     // Possible values: "continue", "bookMark", "done",
     var response = this.behavior();
+    console.log(`Node ${this.behavior.name} CpuTime: ${getCpuTime() - ticksBefore}`);
     if( response == "done") return "done";
     if( response == "bookMark" ) this.board.bookMark(this);
     for (var i = 0; i < this.nodes.length; i++) this.nodes[i].run();
@@ -69,9 +73,11 @@ export class BehaviorTree {
   }
 
   run(){
+    var ticksBefore = getCpuTime();
     var tempNode = this.bookMarkNode;
     this.bookMarkNode = this.root;
     tempNode.run();
+    console.log(`run() CpuTime: ${getCpuTime() - ticksBefore}`);
   }
 
   display(){

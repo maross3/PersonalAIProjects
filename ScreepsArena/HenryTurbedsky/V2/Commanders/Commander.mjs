@@ -1,4 +1,4 @@
-import { getObjectsByPrototype, getRange, findClosestByPath, findClosestByRange } from '/game/utils';
+import { getObjectsByPrototype, getRange, findClosestByPath, findClosestByRange, getCpuTime } from '/game/utils';
 import { Creep, StructureSpawn, StructureContainer, Source, ConstructionSite } from '/game/prototypes';
 import { RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE } from '/game/constants';
 import { searchPath } from 'game/path-finder';
@@ -7,6 +7,8 @@ import { } from '/arena';
 
 
 import { TestSquad } from '../Squads/testSquad'
+
+var squad = new TestSquad(); /////////////////////////////
 
 export class Commander {
 
@@ -42,27 +44,37 @@ export class Commander {
 
 
 
-
   run()
   {
+    var ticksBefore = getCpuTime();
+
     if(!this.spawnLocations[0].spawner)
       this.spawnLocations[0].spawner = getObjectsByPrototype(StructureSpawn).find(s => s.my);
-
-    var squad = new TestSquad();
 
     if(getTicks() == 1){
       this.requestCreepsForSquad(squad, this.spawnLocations[0]);
     }
+    console.log(`start of commander run() CpuTime: ${getCpuTime() - ticksBefore}`);
 
+
+    ticksBefore = getCpuTime();
     this.runCreepSpawningQueues();
+    console.log(`runCreepSpawningQueues CpuTime: ${getCpuTime() - ticksBefore}`);
 
+    ticksBefore = getCpuTime();
     this.enrollCreepsToSquadsInFillQueue();
+    console.log(`enrollCreepsToSquadsInFillQueue CpuTime: ${getCpuTime() - ticksBefore}`);
 
-    if(this.squadList.length > 0){
+    console.log("\nvvvvvvvvvv squad.act(); vvvvvvvvv\n");
+    ticksBefore = getCpuTime();
+    if(this.squadList.length){
       this.squadList.forEach((squad, i)=>{
         squad.act();
       });
     }
+    console.log("\n^^^^^^^^^^ squad.act(); ^^^^^^^^^^^^^");
+    console.log(`from commander run all squads CpuTime: ${getCpuTime() - ticksBefore}`);
+
 
     if(this.debug){
       this.debugCode();
@@ -102,8 +114,8 @@ export class Commander {
 
   // Removes full squads from squadFillQueue and adds hasBeenActivated squadList
   enrollCreepsToSquadsInFillQueue(){
-    if (this.squadFillQueue.length <= 0) return false;
-
+    if (this.squadFillQueue.length == 0 || this.creepPool.length == 0) return false;
+    console.log("is running enrollCreepsToSquadsInFillQueue");
     this.squadFillQueue.forEach((squad, i)=>{
       if(squad.fillSquad(this.creepPool)){
         this.squadFillQueue.splice(i,1);

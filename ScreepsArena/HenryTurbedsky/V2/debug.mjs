@@ -10,8 +10,8 @@ export function timeSplit(words){
   console.log(words+": "+(getCpuTime()-ticksBefore));
 }
 export function timeReset(words){
-  ticksBefore = getCpuTime();
   console.log(words+": "+(getCpuTime()-ticksBefore));
+  ticksBefore = getCpuTime();
 }
 
 // timeStart();

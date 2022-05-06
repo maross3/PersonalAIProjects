@@ -4,35 +4,36 @@ import { searchPath } from 'game/path-finder';
 import { RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK, TOUGH, HEAL, RANGED_ATTACK } from '/game/constants';
 import { getTicks } from 'game'
 import { Visual } from '/game/visual';
+import { timeStart, timeSplit, timeReset } from '../debug'
 // Possible values: "continue", "bookMark", "done",
 
 
 
 export function gather(){
   //console.log("gather");
-  //console.log(this);
-  var ticksBeforeFull = getCpuTime();
-  var ticksBefore = getCpuTime();
+  timeReset("gather(): start of gather()");
   if(!this.board.energyTarget)
     this.board.energyTarget = getObjectsByPrototype(Source)[0];
-  console.log(`gather() !this.board.energyTarget CpuTime: ${getCpuTime() - ticksBefore}`);
+  timeReset("gather(): !this.board.energyTarget");
 
-  var ticksBefore = getCpuTime();
   var source = this.board.energyTarget;
   var creep = this.board.creep;
-  console.log(`gather() var source = this.board.energyTarget; CpuTime: ${getCpuTime() - ticksBefore}`);
+  timeReset("gather(): setup Vars");
 
-  var ticksBefore = getCpuTime();
-  if(creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0)
+  if(creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0){
+    timeReset("gather(): creep is full");
     return "done";
-  console.log(`gather() creep.store.getFreeCapacity(RESOURCE_ENERGY) CpuTime: ${getCpuTime() - ticksBefore}`);
+  }
+  timeReset("gather(): creep needs more");
 
-  var ticksBefore = getCpuTime();
-  if(creep.harvest(source) == ERR_NOT_IN_RANGE)
-    console.log("not creep.moveTo(source)");
-    //creep.moveTo(source);
-  console.log(`gather() creep.harvest(source) == ERR_NOT_IN_RANGE CpuTime: ${getCpuTime() - ticksBefore}`);
-  console.log(`gather() ticksBeforeFull CpuTime: ${getCpuTime() - ticksBefore}`);
+  if(creep.harvest(source) == ERR_NOT_IN_RANGE){
+    timeReset("gather(): source is to far");
+    creep.moveTo(source)
+    timeReset("gather(): creep.moveTo(source)");
+  }
+  timeReset("gather(): creep.harvest(source)");
+
+  timeReset("gather(): bookMark, not done gathering");
   return "bookMark";
 }
 

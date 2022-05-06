@@ -1,4 +1,5 @@
 import { getCpuTime } from '/game/utils';
+import { timeStart, timeSplit, timeReset } from '../debug'
 
 class Node {
   static behavior;
@@ -12,11 +13,10 @@ class Node {
   }
 
   run(){
-    console.log(this.behavior.name);
-    var ticksBefore = getCpuTime();
+    timeReset("Node: started " + this.behavior.name);
     // Possible values: "continue", "bookMark", "done",
     var response = this.behavior();
-    console.log(`Node ${this.behavior.name} CpuTime: ${getCpuTime() - ticksBefore}`);
+    timeReset("\nNode: finished " + this.behavior.name);
     if( response == "done") return "done";
     if( response == "bookMark" ) this.board.bookMark(this);
     for (var i = 0; i < this.nodes.length; i++) this.nodes[i].run();
@@ -73,11 +73,11 @@ export class BehaviorTree {
   }
 
   run(){
-    var ticksBefore = getCpuTime();
+    timeReset("\nBehaviorTree: start run();");
     var tempNode = this.bookMarkNode;
     this.bookMarkNode = this.root;
     tempNode.run();
-    console.log(`run() CpuTime: ${getCpuTime() - ticksBefore}`);
+    timeReset("\nBehaviorTree: Done with tempNode.run();");
   }
 
   display(){

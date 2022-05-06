@@ -4,6 +4,8 @@ import { RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE, ATTACK, TOUGH, HE
 import { searchPath } from 'game/path-finder';
 import { Visual } from '/game/visual';
 
+import { timeStart, timeSplit, timeReset } from '../debug'
+
 
 export class Squad {
 
@@ -26,18 +28,16 @@ export class Squad {
 
 
   act(){
-    var ticksBefore = getCpuTime();
+    timeReset("\nSquad: started act()");
     if(this.currentRoles.length){
       this.currentRoles.forEach((role, i)=>{
-        var ticksBefore2 = getCpuTime();
         if(role.creep){
-          console.log("\nvvvvvvvvvv role.tree.run(); vvvvvvvvv\n");
+          timeReset("Squad: currentRoles.forEach");
           role.tree.run();
-          console.log("\n^^^^^^^^^^ role.tree.run(); ^^^^^^^^^^^^^");
-          console.log(`role.tree.run(); CpuTime: ${getCpuTime() - ticksBefore2}`);
+          timeReset("Squad: role.tree.run();");
         }else{
           this.roleDied(i);
-          console.log(`this.roleDied(i); CpuTime: ${getCpuTime() - ticksBefore2}`);
+          timeReset("Squad: this.roleDied(i);");
         }
       });
 
@@ -46,7 +46,7 @@ export class Squad {
         this.debugSquad();
       }
     }
-    console.log(`\nact() CpuTime: ${getCpuTime() - ticksBefore}`);
+    timeReset("\nSquad: finsished act()");
   }
 
 

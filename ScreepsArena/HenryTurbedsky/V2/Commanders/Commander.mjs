@@ -4,7 +4,7 @@ import { RESOURCE_ENERGY, ERR_NOT_IN_RANGE, WORK, CARRY, MOVE } from '/game/cons
 import { searchPath } from 'game/path-finder';
 import { getTicks } from 'game';
 import { } from '/arena';
-
+import { timeStart, timeSplit, timeReset } from '../debug'
 
 import { TestSquad } from '../Squads/testSquad'
 
@@ -46,35 +46,28 @@ export class Commander {
 
   run()
   {
-    var ticksBefore = getCpuTime();
+    timeReset("Commander: started run()");
 
     if(!this.spawnLocations[0].spawner)
       this.spawnLocations[0].spawner = getObjectsByPrototype(StructureSpawn).find(s => s.my);
 
     if(getTicks() == 1){
       this.requestCreepsForSquad(squad, this.spawnLocations[0]);
+      timeReset("Commander: requestCreepsForSquad");
     }
-    console.log(`start of commander run() CpuTime: ${getCpuTime() - ticksBefore}`);
 
-
-    ticksBefore = getCpuTime();
     this.runCreepSpawningQueues();
-    console.log(`runCreepSpawningQueues CpuTime: ${getCpuTime() - ticksBefore}`);
+    timeReset("Commander: runCreepSpawningQueues");
 
-    ticksBefore = getCpuTime();
     this.enrollCreepsToSquadsInFillQueue();
-    console.log(`enrollCreepsToSquadsInFillQueue CpuTime: ${getCpuTime() - ticksBefore}`);
+    timeReset("Commander: enrollCreepsToSquadsInFillQueue");
 
-    console.log("\nvvvvvvvvvv squad.act(); vvvvvvvvv\n");
-    ticksBefore = getCpuTime();
     if(this.squadList.length){
       this.squadList.forEach((squad, i)=>{
         squad.act();
+        timeReset("\nCommander: done with squad.act();");
       });
     }
-    console.log("\n^^^^^^^^^^ squad.act(); ^^^^^^^^^^^^^");
-    console.log(`from commander run all squads CpuTime: ${getCpuTime() - ticksBefore}`);
-
 
     if(this.debug){
       this.debugCode();
@@ -115,7 +108,6 @@ export class Commander {
   // Removes full squads from squadFillQueue and adds hasBeenActivated squadList
   enrollCreepsToSquadsInFillQueue(){
     if (this.squadFillQueue.length == 0 || this.creepPool.length == 0) return false;
-    console.log("is running enrollCreepsToSquadsInFillQueue");
     this.squadFillQueue.forEach((squad, i)=>{
       if(squad.fillSquad(this.creepPool)){
         this.squadFillQueue.splice(i,1);

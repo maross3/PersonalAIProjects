@@ -46,6 +46,7 @@ export class Commander {
 
   run()
   {
+    timeStart();
     timeReset("Commander: started run()");
 
     if(!this.spawnLocations[0].spawner)
